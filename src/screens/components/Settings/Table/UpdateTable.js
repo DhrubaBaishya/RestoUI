@@ -4,6 +4,8 @@ import NumberInput from "semantic-ui-react-numberinput";
 import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
+import AreaLOV from "./AreaLOV";
+import { validateResponse } from "../../../../util/Util";
 
 class UpdateTable extends Component {
   constructor(props) {
@@ -12,8 +14,15 @@ class UpdateTable extends Component {
       formError: false,
       adding: false,
       reload: false,
+      oldTable: {
+        tableId: "",
+        areaId: "",
+        tableName: "",
+        capacity: "0",
+      },
       table: {
-        id: "",
+        tableId: "",
+        areaId: "",
         tableName: "",
         capacity: "0",
       },
@@ -22,7 +31,7 @@ class UpdateTable extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
-      nextProps.table.id !== this.props.table.id ||
+      nextProps.table.tableId !== this.props.table.tableId ||
       this.state !== nextState
     ) {
       return true;
@@ -31,11 +40,18 @@ class UpdateTable extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.table.id !== this.props.table.id) {
+    if (prevProps.table.tableId !== this.props.table.tableId) {
       this.setState({
         reload: !this.state.reload,
+        oldTable: {
+          tableId: this.props.table.tableId,
+          areaId: this.props.table.areaId,
+          tableName: this.props.table.tableName,
+          capacity: this.props.table.capacity,
+        },
         table: {
-          id: this.props.table.id,
+          tableId: this.props.table.tableId,
+          areaId: this.props.table.areaId,
           tableName: this.props.table.tableName,
           capacity: this.props.table.capacity,
         },
@@ -53,7 +69,8 @@ class UpdateTable extends Component {
     this.setState({
       formError: false,
       table: {
-        id: "",
+        tableId: "",
+        areaId: "",
         capacity: "0",
         tableName: "",
       },
@@ -79,20 +96,35 @@ class UpdateTable extends Component {
     });
   };
 
+  areaChangeHandler = (value) => {
+    this.setState({
+      formError: false,
+      table: {
+        ...this.state.table,
+        areaId: value,
+      },
+    });
+  };
+
   updateTable = () => {
-    const { table } = this.state;
+    const { oldTable, table } = this.state;
+    let errors = [];
     if (table.tableName === null || table.tableName === "") {
+      errors.push(errorMessages.emptyTableName);
+    }
+    if (table.areaId === null || table.areaId === "") {
+      errors.push(errorMessages.areaNotSelected);
+    }
+    if (errors.length > 0) {
       this.setState({
         formError: true,
+        errors: errors,
       });
     } else {
       Axios.post(urls.table, table, { headers: authHeader() })
         .then((response) => {
-          if (
-            response.data.result !== null &&
-            response.data.result.length > 0
-          ) {
-            this.props.updateTable(response.data.result[0]);
+          if (validateResponse(response)) {
+            this.props.update(oldTable, response.data.result[0]);
           }
           this.close();
         })
@@ -103,7 +135,7 @@ class UpdateTable extends Component {
   };
 
   render() {
-    const { table, adding, formError } = this.state;
+    const { table, adding, formError, errors } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
         <Modal.Header>Update Table</Modal.Header>
@@ -115,6 +147,10 @@ class UpdateTable extends Component {
               value={table.tableName}
               onChange={this.tableNameChangeHandler}
             />
+            <AreaLOV
+              areaChangeHandler={this.areaChangeHandler}
+              value={table.areaId}
+            />
             <Form.Field>
               <label>Table Capacity</label>
               <NumberInput
@@ -122,7 +158,7 @@ class UpdateTable extends Component {
                 onChange={this.changeCapacity}
               />
             </Form.Field>
-            <Message error content={errorMessages.emptyTableName} />
+            <Message error negative list={errors} />
           </Form>
         </Modal.Content>
         <Modal.Actions>

@@ -2,6 +2,7 @@ const host = "http://localhost:8710";
 
 export const urls = {
   login: host + "/auth-service/api/auth/login",
+  area: host + "/app-service/api/v1/area",
   table: host + "/app-service/api/v1/table",
   increateTableCapacity: host + "/app-service/api/v1/table/increase",
   decreaseTableCapacity: host + "/app-service/api/v1/table/decrease",
@@ -22,11 +23,17 @@ export const errorMessages = {
   emptyPassword: "Please provide a password",
   checkService: "Please make sure the services are running and try again.",
   loginInvalid: "The username or password is incorrect",
+  emptyAreaName: "Please enter area name",
   emptyTableName: "Please enter table name",
+  areaNotSelected: "Please select an area",
   tryAgain: "Something went wrong. Please try again!",
   fieldEmpty: "Please fill in all the fields",
   categoryExists: "Category name already exists",
   invalidValue: " is invalid",
+};
+
+export const warnings = {
+  deleteArea: "This will delete any table created under the area",
 };
 
 export const general = {

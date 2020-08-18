@@ -26,7 +26,7 @@ class Order extends Component {
       saved: true,
       orderCreated: false,
       order: {
-        tableId: this.props.table.id,
+        tableId: this.props.table.tableId,
         status: "NEW",
         items: [],
         taxes: [],
@@ -186,7 +186,7 @@ class Order extends Component {
   componentDidMount() {
     const { table } = this.props;
     Axios.all([
-      Axios.get(urls.tableOrder + table.id, { headers: authHeader() }),
+      Axios.get(urls.tableOrder + table.tableId, { headers: authHeader() }),
     ])
       .then(
         Axios.spread((pOrder) => {

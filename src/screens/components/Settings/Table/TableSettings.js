@@ -1,22 +1,17 @@
 import React, { Component } from "react";
-import { Button, Divider, Icon, Card, Confirm } from "semantic-ui-react";
-import AdminTable from "./AdminTable";
+import { Menu } from "semantic-ui-react";
 import { urls } from "../../../../properties/properties";
 import axios from "axios";
 import authHeader from "../../../../service/authHeader";
-import AddTable from "./AddTable";
-import UpdateTable from "./UpdateTable";
+import Area from "./Area";
+import Tables from "./Tables";
 
 class TableSettings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openAdd: false,
-      openUpdate: false,
-      openConfirm: false,
-      loading: false,
-      formError: false,
-      tableList: [],
+      activeItem: 1,
+      areaList: [],
       table: {
         id: "",
         tableName: "",
@@ -25,111 +20,86 @@ class TableSettings extends Component {
     };
   }
 
-  openAdd = () => {
+  changeMenu = (e, { index }) => {
     this.setState({
-      ...this.state,
-      openAdd: true,
+      activeItem: index,
     });
   };
 
-  openUpdate = () => {
+  addAreaToList = (pArea) => {
+    let { areaList } = this.state;
+    areaList.push(pArea);
     this.setState({
-      ...this.state,
-      openUpdate: true,
+      areaList: areaList,
     });
   };
 
-  close = () => {
-    this.setState({
-      ...this.state,
-      openAdd: false,
-      openUpdate: false,
-      table: {
-        id: "",
-        tableName: "",
-        capacity: "0",
-      },
-    });
-  };
-
-  toggleLoading = () => {
-    this.setState({
-      loading: !this.state.loading,
-    });
-  };
-
-  showConfirm = (id) => {
-    this.setState({
-      openConfirm: true,
-      tableId: id,
-    });
-  };
-
-  showUpdate = (table) => {
-    this.setState({
-      openUpdate: true,
-      table: {
-        id: table.id,
-        tableName: table.tableName,
-        capacity: table.capacity + "",
-      },
-    });
-  };
-
-  handleCancel = () => {
-    this.setState({
-      openConfirm: false,
-    });
-  };
-
-  handleConfirm = () => {
-    this.deleteTable();
-    this.handleCancel();
-  };
-
-  deleteTable = () => {
-    const { tableId } = this.state;
-    this.toggleLoading();
-    axios
-      .post(urls.table + "/" + tableId, this.props.table, {
-        headers: authHeader(),
-      })
-      .then((response) => {
-        this.toggleLoading();
-        this.removeTable(tableId);
-      })
-      .catch((msg) => {
-        this.toggleLoading();
-        console.log("delete failed");
-      });
-  };
-
-  removeTable = (tableId) => {
-    const tables = this.state.tableList.filter((table) => table.id !== tableId);
-    this.setState({
-      tableList: tables,
-    });
-  };
-
-  addTableToList = (table) => {
-    this.state.tableList.push(table);
-    this.setState({
-      ...this.state,
-    });
-  };
-
-  updateTable = (pTable) => {
-    const index = this.state.tableList.findIndex(
-      (table) => table.id === pTable.id
+  deleteArea = (pArea) => {
+    const areaList = this.state.areaList.filter(
+      (area) => area.areaId !== pArea.areaId
     );
-    let tables = this.state.tableList;
-    tables[index] = {
-      ...tables[index],
-      capacity: pTable.capacity,
-      tableName: pTable.tableName,
-    };
     this.setState({
-      tableList: tables,
+      areaList: areaList,
+    });
+  };
+
+  updateArea = (pArea) => {
+    let { areaList } = this.state;
+    let index = areaList.findIndex((area) => area.areaId === pArea.areaId);
+    let area = areaList[index];
+    area.areaName = pArea.areaName;
+    this.setState({
+      areaList: areaList,
+    });
+  };
+
+  addTable = (pTable) => {
+    let { areaList } = this.state;
+    let index = areaList.findIndex((area) => area.areaId === pTable.areaId);
+    areaList[index].tables.push(pTable);
+    this.setState({
+      areaList: areaList,
+    });
+  };
+
+  updateTable = (pOldTable, pTable) => {
+    let { areaList } = this.state;
+    if (pOldTable.areaId === pTable.areaId) {
+      let areaIndex = areaList.findIndex(
+        (area) => area.areaId === pTable.areaId
+      );
+      let tables = areaList[areaIndex].tables;
+      let tableIndex = tables.findIndex(
+        (table) => table.tableId === pTable.tableId
+      );
+      tables[tableIndex].tableName = pTable.tableName;
+      tables[tableIndex].capacity = pTable.capacity;
+      this.setState({
+        areaList: areaList,
+      });
+    } else {
+      let index = areaList.findIndex((area) => area.areaId === pTable.areaId);
+      areaList[index].tables.push(pTable);
+      index = areaList.findIndex((area) => area.areaId === pOldTable.areaId);
+      let tables = areaList[index].tables.filter(
+        (table) => table.tableId !== pOldTable.tableId
+      );
+      areaList[index].tables = tables;
+      this.setState({
+        areaList: areaList,
+      });
+    }
+  };
+
+  deleteTable = (pTable) => {
+    let { areaList } = this.state;
+    let index = areaList.findIndex((area) => area.areaId === pTable.areaId);
+    let tables = areaList[index].tables.filter(
+      (table) => table.tableId !== pTable.tableId
+    );
+    areaList[index].tables = tables;
+    this.setState({
+      areaList: areaList,
     });
   };
 
@@ -156,70 +126,54 @@ class TableSettings extends Component {
     }
   };
 
-  componentDidMount(nextProps, nextState) {
+  componentDidMount() {
     axios
-      .get(urls.table, { headers: authHeader() })
+      .get(urls.area, { headers: authHeader() })
       .then((response) => {
         this.setState({
           ...this.state,
-          tableList: response.data.result,
+          areaList: response.data.result,
         });
       })
-      .catch((msg) => {
-        console.log(msg);
+      .catch((err) => {
+        console.log(err);
       });
   }
 
   render() {
-    const {
-      openConfirm,
-      loading,
-      tableList,
-      table,
-      openAdd,
-      openUpdate,
-    } = this.state;
+    const { areaList, activeItem } = this.state;
     return (
       <div>
-        <Button basic size="medium" color="brown" onClick={this.openAdd}>
-          <Icon name="add" /> Add Table
-        </Button>
-        <Divider />
+        <Menu attached="top" size="tiny">
+          <Menu.Item
+            name="Area"
+            index={1}
+            active={activeItem === 1}
+            onClick={this.changeMenu}
+          />
+          <Menu.Item
+            name="Tables"
+            index={2}
+            active={activeItem === 2}
+            onClick={this.changeMenu}
+          />
+        </Menu>
 
-        <Card.Group>
-          {tableList.map((table) => (
-            <AdminTable
-              key={table.id}
-              table={table}
-              showConfirm={this.showConfirm}
-              loading={loading}
-              incrementCapacity={this.incrementCapacity}
-              decrementCapacity={this.decrementCapacity}
-              showUpdate={this.showUpdate}
-            />
-          ))}
-        </Card.Group>
-
-        <AddTable
-          open={openAdd}
-          addTableToList={this.addTableToList}
-          close={this.close}
-        />
-
-        <UpdateTable
-          open={openUpdate}
-          close={this.close}
-          table={table}
-          updateTable={this.updateTable}
-        />
-
-        <Confirm
-          open={openConfirm}
-          confirmButton="Delete"
-          onCancel={this.handleCancel}
-          onConfirm={this.handleConfirm}
-          size="mini"
-        />
+        {activeItem === 1 ? (
+          <Area
+            areaList={areaList}
+            add={this.addAreaToList}
+            update={this.updateArea}
+            delete={this.deleteArea}
+          />
+        ) : (
+          <Tables
+            areaList={areaList}
+            add={this.addTable}
+            update={this.updateTable}
+            delete={this.deleteTable}
+          />
+        )}
       </div>
     );
   }

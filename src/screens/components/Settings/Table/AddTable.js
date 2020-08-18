@@ -4,15 +4,19 @@ import NumberInput from "semantic-ui-react-numberinput";
 import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
+import AreaLOV from "./AreaLOV";
+import { validateResponse } from "../../../../util/Util";
 
 class AddTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       formError: false,
+      errors: [],
       adding: false,
       table: {
         capacity: "0",
+        areaId: "",
         tableName: "",
       },
     };
@@ -29,6 +33,7 @@ class AddTable extends Component {
       formError: false,
       table: {
         capacity: "0",
+        areaId: "",
         tableName: "",
       },
     });
@@ -37,14 +42,12 @@ class AddTable extends Component {
 
   changeCapacity = (newValue) => {
     this.setState({
-      ...this.state,
       table: { ...this.state.table, capacity: newValue },
     });
   };
 
   tableNameChangeHandler = (e) => {
     this.setState({
-      ...this.state,
       formError: false,
       table: {
         ...this.state.table,
@@ -53,18 +56,35 @@ class AddTable extends Component {
     });
   };
 
+  areaChangeHandler = (value) => {
+    this.setState({
+      formError: false,
+      table: {
+        ...this.state.table,
+        areaId: value,
+      },
+    });
+  };
+
   addTable = () => {
     const { table } = this.state;
-    console.log(table);
+    let errors = [];
     if (table.tableName === null || table.tableName === "") {
+      errors.push(errorMessages.emptyTableName);
+    }
+    if (table.areaId === null || table.areaId === "") {
+      errors.push(errorMessages.areaNotSelected);
+    }
+    if (errors.length > 0) {
       this.setState({
         formError: true,
+        errors: errors,
       });
     } else {
       Axios.post(urls.table, table, { headers: authHeader() })
         .then((response) => {
-          for (let i = 0; i < response.data.result.length; i++) {
-            this.props.addTableToList(response.data.result[i]);
+          if (validateResponse(response)) {
+            this.props.add(response.data.result[0]);
           }
           this.close();
         })
@@ -75,7 +95,7 @@ class AddTable extends Component {
   };
 
   render() {
-    const { table, adding, formError } = this.state;
+    const { table, adding, formError, errors } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
         <Modal.Header>Table Details</Modal.Header>
@@ -87,6 +107,7 @@ class AddTable extends Component {
               value={table.tableName}
               onChange={this.tableNameChangeHandler}
             />
+            <AreaLOV areaChangeHandler={this.areaChangeHandler} />
             <Form.Field>
               <label>Table Capacity</label>
               <NumberInput
@@ -94,7 +115,7 @@ class AddTable extends Component {
                 onChange={this.changeCapacity}
               />
             </Form.Field>
-            <Message error content={errorMessages.emptyTableName} />
+            <Message error negative list={errors} />
           </Form>
         </Modal.Content>
         <Modal.Actions>

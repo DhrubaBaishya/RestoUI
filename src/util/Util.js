@@ -11,3 +11,14 @@ export function generateURL(url, key, value) {
   }
   return result;
 }
+
+export function validateResponse(response) {
+  if (
+    response !== null &&
+    response.data !== null &&
+    response.data.result != null &&
+    response.data.result.length > 0
+  )
+    return true;
+  else return false;
+}
