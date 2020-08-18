@@ -255,6 +255,7 @@ class Order extends Component {
                     labelPosition="right"
                     color="blue"
                     content="Complete"
+                    a
                     loading={loading}
                     disabled={!saved || loading || disabled}
                     onClick={this.completeOrder}
