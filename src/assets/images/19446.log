@@ -1,0 +1,10 @@
+Calling LoadProfileDataToAI::execute with argument1=ALL, argument2=null
+Profile Option ORA_AI_FOR_TALENT is Y.
+Profile Option ORA_HRT_PROFILE_DATA_MIGRATED is not null.
+Calling ProfileIngestionAMImpl::ingestProfileData with profileType=ALL, isNewProfileData=true, cutOffDate=null, outputDirectory=/u01/APPLTOP/instance/ess/rfd/19446/out/
+Exiting ProfileIngestionAMImpl::ingestProfileData.
+Ingestion process output map content | ingestionProcessOutputMap: {INGESTION_STATUS=SUCCESS, HTTP_STATUS_CODE=200}
+Start to update hrt_ai_ingest_run table.
+Start to commit the changes to hrt_ai_ingest_run table.
+Sucessfully inserted or udated the record in hrt_ai_ingest_run with TalentObject ALL, LastRunDate 2020-06-22 08:23:36.641, HttpStatusCode null
+Exiting LoadProfileDataToAI::execute()

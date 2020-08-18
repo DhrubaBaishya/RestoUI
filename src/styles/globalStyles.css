@@ -1,0 +1,33 @@
+.LoginContainer {
+  background-color: indigo;
+  height: 100%;
+  width: 100%;
+  box-shadow: 0px 0px 15px #ccc;
+}
+.loginFormImage {
+  position: relative;
+  width: 70%;
+  height: 100%;
+}
+.loginForm {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 100%;
+  width: 50%;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+.logo {
+  height: 100px;
+  width: 100px;
+}
+.logoMenuItem {
+  padding: 3px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+.navBar {
+  background-color: #c2d8be !important;
+  border-radius: 0% !important;
+}
