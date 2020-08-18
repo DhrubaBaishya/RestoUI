@@ -3,7 +3,7 @@ import Axios from "axios";
 import { urls } from "../../../properties/properties";
 import authHeader from "../../../service/authHeader";
 import { Table, Button, Divider } from "semantic-ui-react";
-import CategoryType from "../Menu/CategoryType";
+import CategoryType from "../Settings/Menu/CategoryType";
 
 class Menu extends Component {
   constructor(props) {

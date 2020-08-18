@@ -1,61 +1,23 @@
 import React, { Component } from "react";
-import { Modal, Form, Input, Message, Button } from "semantic-ui-react";
+import { Modal, Form, Button, Message, Input } from "semantic-ui-react";
+import { errorMessages, urls } from "../../../../properties/properties";
 import Category from "./Category";
+import authHeader from "../../../../service/authHeader";
 import Axios from "axios";
-import { urls, errorMessages } from "../../../properties/properties";
-import authHeader from "../../../service/authHeader";
 
-class UpdateItem extends Component {
+class AddItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       formError: false,
       adding: false,
       error: "",
-      reload: false,
-      oldItem: {
-        id: "",
-        itemName: "",
-        price: "",
-        categoryId: "",
-      },
       item: {
-        id: "",
         itemName: "",
         price: "",
         categoryId: "",
       },
     };
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.item.id !== this.props.item.id || this.state !== nextState) {
-      return true;
-    }
-    return false;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.item.id !== this.props.item.id) {
-      const { item } = this.props;
-      this.setState({
-        reload: !this.state.reload,
-        oldItem: {
-          id: item.id,
-          itemName: item.itemName,
-          price: item.price,
-          categoryId: item.categoryId,
-          categoryTypeId: item.categoryTypeId,
-        },
-        item: {
-          id: item.id,
-          itemName: item.itemName,
-          price: item.price,
-          categoryId: item.categoryId,
-          categoryTypeId: item.categoryTypeId,
-        },
-      });
-    }
   }
 
   toggleAdding = () => {
@@ -68,7 +30,6 @@ class UpdateItem extends Component {
     this.setState({
       formError: false,
       item: {
-        id: "",
         itemName: "",
         price: "",
         categoryId: "",
@@ -115,8 +76,8 @@ class UpdateItem extends Component {
     });
   };
 
-  updateItem = () => {
-    const { item, oldItem } = this.state;
+  addItem = () => {
+    const { item } = this.state;
     if (
       item.itemName === null ||
       item.itemName === "" ||
@@ -138,7 +99,7 @@ class UpdateItem extends Component {
             response.data.result !== null &&
             response.data.result.length > 0
           ) {
-            this.props.updateItem(response.data.result[0], oldItem);
+            this.props.addItem(response.data.result[0]);
           }
           this.toggleAdding();
         })
@@ -152,7 +113,7 @@ class UpdateItem extends Component {
     const { formError, item, adding, error } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Item</Modal.Header>
+        <Modal.Header>Item Details</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
             <Form.Field
@@ -186,7 +147,7 @@ class UpdateItem extends Component {
             disabled={adding}
             labelPosition="right"
             content="Save"
-            onClick={this.updateItem}
+            onClick={this.addItem}
           />
         </Modal.Actions>
       </Modal>
@@ -194,4 +155,4 @@ class UpdateItem extends Component {
   }
 }
 
-export default UpdateItem;
+export default AddItem;

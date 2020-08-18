@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Button, Divider, Icon, Card, Confirm } from "semantic-ui-react";
 import AdminTable from "./AdminTable";
-import { urls } from "../../../properties/properties";
+import { urls } from "../../../../properties/properties";
 import axios from "axios";
-import authHeader from "../../../service/authHeader";
+import authHeader from "../../../../service/authHeader";
 import AddTable from "./AddTable";
 import UpdateTable from "./UpdateTable";
 

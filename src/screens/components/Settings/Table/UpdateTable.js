@@ -1,21 +1,46 @@
 import React, { Component } from "react";
 import { Modal, Form, Button, Message, Input } from "semantic-ui-react";
 import NumberInput from "semantic-ui-react-numberinput";
-import { errorMessages, urls } from "../../../properties/properties";
+import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
-import authHeader from "../../../service/authHeader";
+import authHeader from "../../../../service/authHeader";
 
-class AddTable extends Component {
+class UpdateTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       formError: false,
       adding: false,
+      reload: false,
       table: {
-        capacity: "0",
+        id: "",
         tableName: "",
+        capacity: "0",
       },
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.table.id !== this.props.table.id ||
+      this.state !== nextState
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.table.id !== this.props.table.id) {
+      this.setState({
+        reload: !this.state.reload,
+        table: {
+          id: this.props.table.id,
+          tableName: this.props.table.tableName,
+          capacity: this.props.table.capacity,
+        },
+      });
+    }
   }
 
   toggleButtonLoading = () => {
@@ -28,6 +53,7 @@ class AddTable extends Component {
     this.setState({
       formError: false,
       table: {
+        id: "",
         capacity: "0",
         tableName: "",
       },
@@ -53,9 +79,8 @@ class AddTable extends Component {
     });
   };
 
-  addTable = () => {
+  updateTable = () => {
     const { table } = this.state;
-    console.log(table);
     if (table.tableName === null || table.tableName === "") {
       this.setState({
         formError: true,
@@ -63,8 +88,11 @@ class AddTable extends Component {
     } else {
       Axios.post(urls.table, table, { headers: authHeader() })
         .then((response) => {
-          for (let i = 0; i < response.data.result.length; i++) {
-            this.props.addTableToList(response.data.result[i]);
+          if (
+            response.data.result !== null &&
+            response.data.result.length > 0
+          ) {
+            this.props.updateTable(response.data.result[0]);
           }
           this.close();
         })
@@ -78,7 +106,7 @@ class AddTable extends Component {
     const { table, adding, formError } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Table Details</Modal.Header>
+        <Modal.Header>Update Table</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
             <Form.Field
@@ -108,7 +136,7 @@ class AddTable extends Component {
             disabled={adding}
             labelPosition="right"
             content="Save"
-            onClick={this.addTable}
+            onClick={this.updateTable}
           />
         </Modal.Actions>
       </Modal>
@@ -116,4 +144,4 @@ class AddTable extends Component {
   }
 }
 
-export default AddTable;
+export default UpdateTable;

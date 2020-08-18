@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Menu } from "semantic-ui-react";
 import Axios from "axios";
-import { urls } from "../../../properties/properties";
-import authHeader from "../../../service/authHeader";
+import { urls } from "../../../../properties/properties";
+import authHeader from "../../../../service/authHeader";
 import CategoryMenu from "./CategoryMenu";
 import ItemMenu from "./ItemMenu";
 

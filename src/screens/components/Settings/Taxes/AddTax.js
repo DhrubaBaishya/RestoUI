@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Modal, Form, Input, Button, Message, Select } from "semantic-ui-react";
-import { errorMessages, urls } from "../../../properties/properties";
+import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
-import authHeader from "../../../service/authHeader";
+import authHeader from "../../../../service/authHeader";
 
-class UpdateTax extends Component {
+class AddTax extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,7 +12,6 @@ class UpdateTax extends Component {
       formError: false,
       error: "",
       tax: {
-        taxId: "",
         taxName: "",
         percentage: "",
         mandatory: "Y",
@@ -35,7 +34,6 @@ class UpdateTax extends Component {
     this.setState({
       formError: false,
       tax: {
-        taxId: "",
         taxName: "",
         percentage: "",
         mandatory: "Y",
@@ -82,7 +80,7 @@ class UpdateTax extends Component {
     });
   };
 
-  updateTax = () => {
+  addTax = () => {
     const { tax } = this.state;
     const re = /^[0-9]+\.?[0-9]*$/;
     if (
@@ -106,7 +104,7 @@ class UpdateTax extends Component {
         .then((response) => {
           this.toggleAdding();
           this.close();
-          this.props.updateTax(response.data.result[0]);
+          this.props.addTax(response.data.result[0]);
         })
         .catch((err) => {
           this.toggleAdding();
@@ -118,41 +116,11 @@ class UpdateTax extends Component {
     }
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (
-      this.props.tax.taxId !== nextProps.tax.taxId ||
-      this.props.open !== nextProps.open ||
-      this.state !== nextState
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.tax.taxId !== prevProps.tax.taxId ||
-      this.props.open !== prevProps.open
-    ) {
-      const { tax } = this.props;
-      this.setState({
-        tax: {
-          taxId: tax.taxId,
-          taxName: tax.taxName,
-          percentage: tax.percentage,
-          mandatory: tax.mandatory,
-        },
-        selectedValue: tax.mandatory,
-      });
-    }
-  }
-
   render() {
     const { adding, formError, error, tax, values, selectedValue } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Tax</Modal.Header>
+        <Modal.Header>Tax Details</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
             <Form.Field
@@ -190,7 +158,7 @@ class UpdateTax extends Component {
             disabled={adding}
             labelPosition="right"
             content="Save"
-            onClick={this.updateTax}
+            onClick={this.addTax}
           />
         </Modal.Actions>
       </Modal>
@@ -198,4 +166,4 @@ class UpdateTax extends Component {
   }
 }
 
-export default UpdateTax;
+export default AddTax;

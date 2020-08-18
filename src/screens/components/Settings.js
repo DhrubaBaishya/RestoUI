@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Menu, Segment } from "semantic-ui-react";
-import TableSettings from "./Table/TableSettings";
-import MenuSettings from "./Menu/MenuSettings";
-import WorkerSettings from "./Workers/WorkerSettings";
-import TaxSettings from "./Taxes/TaxSettings";
+import TableSettings from "./Settings/Table/TableSettings";
+import MenuSettings from "./Settings/Menu/MenuSettings";
+import WorkerSettings from "./Settings/Workers/WorkerSettings";
+import TaxSettings from "./Settings/Taxes/TaxSettings";
 
 class Settings extends Component {
   constructor(props) {

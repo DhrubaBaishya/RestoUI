@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Axios from "axios";
-import { urls } from "../../../properties/properties";
-import authHeader from "../../../service/authHeader";
+import { urls } from "../../../../properties/properties";
+import authHeader from "../../../../service/authHeader";
 import { Form, Select } from "semantic-ui-react";
 
 class CategoryType extends Component {

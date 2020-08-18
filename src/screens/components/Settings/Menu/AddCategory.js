@@ -1,57 +1,22 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Message, Input } from "semantic-ui-react";
-import CategoryType from "./CategoryType";
+import { Modal, Form, Message, Button, Input } from "semantic-ui-react";
+import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
-import { urls, errorMessages } from "../../../properties/properties";
-import authHeader from "../../../service/authHeader";
+import authHeader from "../../../../service/authHeader";
+import CategoryType from "./CategoryType";
 
-class UpdateCategory extends Component {
+class AddCategory extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
       formError: false,
+      adding: false,
       error: "",
-      oldCategory: {
-        id: "",
-        categoryName: "",
-        categoryTypeId: "",
-      },
       category: {
-        id: "",
-        categoryName: "",
         categoryTypeId: "",
+        categoryName: "",
       },
     };
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (
-      nextProps.category.id !== this.props.category.id ||
-      this.state !== nextState
-    ) {
-      return true;
-    }
-    return false;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.category.id !== this.props.category.id) {
-      const { category } = this.props;
-      this.setState({
-        reload: !this.state.reload,
-        oldCategory: {
-          id: category.id,
-          categoryName: category.categoryName,
-          categoryTypeId: category.categoryTypeId,
-        },
-        category: {
-          id: category.id,
-          categoryName: category.categoryName,
-          categoryTypeId: category.categoryTypeId,
-        },
-      });
-    }
   }
 
   toggleAdding = () => {
@@ -64,7 +29,6 @@ class UpdateCategory extends Component {
     this.setState({
       formError: false,
       category: {
-        id: "",
         categoryTypeId: "",
         categoryName: "",
       },
@@ -96,8 +60,8 @@ class UpdateCategory extends Component {
     });
   };
 
-  updateCategory = () => {
-    const { category, oldCategory } = this.state;
+  addCategory = () => {
+    const { category } = this.state;
     if (
       category.categoryName === null ||
       category.categoryName === "" ||
@@ -117,7 +81,7 @@ class UpdateCategory extends Component {
             response.data.result !== null &&
             response.data.result.length > 0
           ) {
-            this.props.updateCategory(response.data.result[0], oldCategory);
+            this.props.addCategory(response.data.result[0]);
           }
           this.toggleAdding();
         })
@@ -131,13 +95,10 @@ class UpdateCategory extends Component {
     const { formError, category, adding, error } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Category</Modal.Header>
+        <Modal.Header>Category Details</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
-            <CategoryType
-              typeChangeHandler={this.typeChangeHandler}
-              categoryTypeId={category.categoryTypeId}
-            />
+            <CategoryType typeChangeHandler={this.typeChangeHandler} />
             <Form.Field
               control={Input}
               placeholder="Name"
@@ -158,7 +119,7 @@ class UpdateCategory extends Component {
             disabled={adding}
             labelPosition="right"
             content="Save"
-            onClick={this.updateCategory}
+            onClick={this.addCategory}
           />
         </Modal.Actions>
       </Modal>
@@ -166,4 +127,4 @@ class UpdateCategory extends Component {
   }
 }
 
-export default UpdateCategory;
+export default AddCategory;

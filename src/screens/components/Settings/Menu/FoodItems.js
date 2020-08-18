@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Table, Button, Icon } from "semantic-ui-react";
 import Axios from "axios";
-import authHeader from "../../../service/authHeader";
-import { urls } from "../../../properties/properties";
+import authHeader from "../../../../service/authHeader";
+import { urls } from "../../../../properties/properties";
 
 class FoodItems extends Component {
   constructor(props) {

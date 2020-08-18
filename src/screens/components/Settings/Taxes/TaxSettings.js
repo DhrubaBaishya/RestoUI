@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Form, Button, Icon, Divider, Table, Confirm } from "semantic-ui-react";
 import AddTax from "./AddTax";
 import Axios from "axios";
-import { urls } from "../../../properties/properties";
-import authHeader from "../../../service/authHeader";
+import { urls } from "../../../../properties/properties";
+import authHeader from "../../../../service/authHeader";
 import UpdateTax from "./UpdateTax";
 
 class TaxSettings extends Component {

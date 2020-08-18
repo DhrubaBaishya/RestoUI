@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Input, Message } from "semantic-ui-react";
+import { Modal, Form, Message, Button, Input } from "semantic-ui-react";
+import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
-import authHeader from "../../../service/authHeader";
-import { errorMessages, urls } from "../../../properties/properties";
+import authHeader from "../../../../service/authHeader";
 
-class UpdateAccount extends Component {
+class AddAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,7 +12,6 @@ class UpdateAccount extends Component {
       formError: false,
       error: "",
       person: {
-        personId: "",
         fullName: "",
         phoneNumber: "",
       },
@@ -29,7 +28,6 @@ class UpdateAccount extends Component {
     this.setState({
       formError: false,
       person: {
-        personId: "",
         fullName: "",
         phoneNumber: "",
       },
@@ -40,34 +38,6 @@ class UpdateAccount extends Component {
     this.clearForm();
     this.props.close();
   };
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (
-      this.props.person.personId !== nextProps.person.personId ||
-      this.props.open !== nextProps.open ||
-      this.state !== nextState
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.person.personId !== prevProps.person.personId ||
-      this.props.open !== prevProps.open
-    ) {
-      const { person } = this.props;
-      this.setState({
-        person: {
-          personId: person.personId,
-          fullName: person.fullName,
-          phoneNumber: person.phoneNumber,
-        },
-      });
-    }
-  }
 
   fullNameChangeHandler = (e) => {
     this.setState({
@@ -93,7 +63,7 @@ class UpdateAccount extends Component {
     }
   };
 
-  updateAccount = () => {
+  addAccount = () => {
     const { person } = this.state;
     if (
       person.fullName === null ||
@@ -109,13 +79,8 @@ class UpdateAccount extends Component {
       this.toggleAdding();
       Axios.post(urls.person, person, { headers: authHeader() })
         .then((response) => {
+          this.props.addPerson(response.data.result[0]);
           this.toggleAdding();
-          if (
-            response.data.result !== null &&
-            response.data.result.length > 0
-          ) {
-            this.props.update(response.data.result[0]);
-          }
           this.close();
         })
         .catch((err) => {
@@ -134,7 +99,7 @@ class UpdateAccount extends Component {
     const { adding, formError, person, error } = this.state;
     return (
       <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Account</Modal.Header>
+        <Modal.Header>Worker Account Details</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
             <Form.Field
@@ -164,7 +129,7 @@ class UpdateAccount extends Component {
             disabled={adding}
             labelPosition="right"
             content="Save"
-            onClick={this.updateAccount}
+            onClick={this.addAccount}
           />
         </Modal.Actions>
       </Modal>
@@ -172,4 +137,4 @@ class UpdateAccount extends Component {
   }
 }
 
-export default UpdateAccount;
+export default AddAccount;

@@ -3,10 +3,10 @@ import { Button, Icon, Divider, Card, Form } from "semantic-ui-react";
 import AddAccount from "./AddAccount";
 import Active from "./Active";
 import Person from "./Person";
-import { generateURL } from "../../../util/Util";
+import { generateURL } from "../../../../util/Util";
 import Axios from "axios";
-import authHeader from "../../../service/authHeader";
-import { urls, general } from "../../../properties/properties";
+import authHeader from "../../../../service/authHeader";
+import { urls, general } from "../../../../properties/properties";
 import UpdateAccount from "./UpdateAccount";
 
 class WorkerSettings extends Component {
