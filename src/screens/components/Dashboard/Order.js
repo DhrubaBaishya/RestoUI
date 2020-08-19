@@ -15,6 +15,7 @@ class Order extends Component {
       loading: false,
       disabled: true,
       openConfirm: false,
+      openCompleteConfirm: false,
       openPrint: false,
       openMenu: false,
       saved: true,
@@ -72,6 +73,22 @@ class Order extends Component {
 
   handleConfirm = () => {
     this.props.closeOrder();
+  };
+
+  openCompleteConfirm = () => {
+    this.setState({
+      openCompleteConfirm: true,
+    });
+  };
+
+  closeCompleteConfirm = () => {
+    this.setState({
+      openCompleteConfirm: false,
+    });
+  };
+
+  handleCompleteConfirm = () => {
+    this.completeOrder();
   };
 
   closeOrder = () => {
@@ -228,6 +245,7 @@ class Order extends Component {
     const {
       order,
       openConfirm,
+      openCompleteConfirm,
       openPrint,
       openMenu,
       saved,
@@ -275,7 +293,7 @@ class Order extends Component {
               content="Complete"
               loading={loading}
               disabled={!saved || loading || disabled}
-              onClick={this.completeOrder}
+              onClick={this.openCompleteConfirm}
             />
 
             <Button
@@ -315,7 +333,7 @@ class Order extends Component {
         )}
         <Button
           floated="right"
-          color="blue"
+          color={saved ? "blue" : "red"}
           onClick={this.closeOrder}
           loading={loading}
           disabled={loading || disabled}
@@ -340,6 +358,15 @@ class Order extends Component {
           confirmButton="Yes"
           onCancel={this.closeConfirm}
           onConfirm={this.handleConfirm}
+          size="mini"
+        />
+
+        <Confirm
+          open={openCompleteConfirm}
+          content="Are you sure?"
+          confirmButton="Complete"
+          onCancel={this.closeCompleteConfirm}
+          onConfirm={this.handleCompleteConfirm}
           size="mini"
         />
 

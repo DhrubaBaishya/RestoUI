@@ -61,8 +61,12 @@ export default class componentName extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.open !== this.props.open) {
+      let items = [];
+      this.props.order.items.map((item) =>
+        items.push(JSON.parse(JSON.stringify(item)))
+      );
       this.setState({
-        items: this.props.order.items,
+        items: items,
       });
     }
   }
@@ -98,7 +102,6 @@ export default class componentName extends Component {
       <Modal
         size="large"
         open={open}
-        onClose={this.props.close}
         closeOnDimmerClick={false}
         closeOnEscape={false}
       >
