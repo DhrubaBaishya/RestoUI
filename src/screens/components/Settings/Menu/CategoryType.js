@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import Axios from "axios";
 import { urls } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
-import { Form, Select } from "semantic-ui-react";
+import { Dropdown } from "semantic-ui-react";
 
 class CategoryType extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       type: [],
     };
   }
@@ -26,6 +27,7 @@ class CategoryType extends Component {
           types.push(type);
         }
         this.setState({
+          loading: false,
           type: types,
         });
       })
@@ -39,16 +41,17 @@ class CategoryType extends Component {
   };
 
   render() {
-    const { type } = this.state;
+    const { type, loading } = this.state;
     const { categoryTypeId } = this.props;
     return (
-      <Form.Field
+      <Dropdown
+        selection
+        clearable
+        loading={loading}
         options={type}
-        control={Select}
         value={categoryTypeId}
         placeholder="Type"
         onChange={this.categoryTypeChangeListener}
-        search
       />
     );
   }

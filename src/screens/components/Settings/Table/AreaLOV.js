@@ -3,12 +3,13 @@ import { validateResponse } from "../../../../util/Util";
 import Axios from "axios";
 import { urls } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
-import { Form, Select } from "semantic-ui-react";
+import { Dropdown } from "semantic-ui-react";
 
 class AreaLOV extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       areaList: [],
     };
   }
@@ -28,6 +29,7 @@ class AreaLOV extends Component {
             areas.push(type);
           }
           this.setState({
+            loading: false,
             areaList: areas,
           });
         }
@@ -42,16 +44,17 @@ class AreaLOV extends Component {
   };
 
   render() {
-    const { areaList } = this.state;
+    const { areaList, loading } = this.state;
     const { value } = this.props;
     return (
-      <Form.Field
+      <Dropdown
         options={areaList}
-        control={Select}
         placeholder="Area"
+        selection
+        loading={loading}
         value={value}
         onChange={this.areaChangeListener}
-        search
+        clearable
       />
     );
   }

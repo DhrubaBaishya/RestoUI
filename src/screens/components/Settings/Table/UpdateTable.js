@@ -147,10 +147,12 @@ class UpdateTable extends Component {
               value={table.tableName}
               onChange={this.tableNameChangeHandler}
             />
-            <AreaLOV
-              areaChangeHandler={this.areaChangeHandler}
-              value={table.areaId}
-            />
+            <Form.Field>
+              <AreaLOV
+                areaChangeHandler={this.areaChangeHandler}
+                value={table.areaId}
+              />
+            </Form.Field>
             <Form.Field>
               <label>Table Capacity</label>
               <NumberInput

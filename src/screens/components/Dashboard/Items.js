@@ -116,16 +116,22 @@ class Items extends Component {
             </Table.Body>
           </Table>
         )}
-        <Table compact="very" size="small" unstackable>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell textAlign="left">Total Amount</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">
-                {allTotalAmount} /-
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-        </Table>
+        {allTotalAmount > 0 ? (
+          <Table compact="very" size="small" unstackable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell textAlign="left">
+                  Total Amount
+                </Table.HeaderCell>
+                <Table.HeaderCell textAlign="right">
+                  {allTotalAmount} /-
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+          </Table>
+        ) : (
+          ""
+        )}
       </div>
     );
   }

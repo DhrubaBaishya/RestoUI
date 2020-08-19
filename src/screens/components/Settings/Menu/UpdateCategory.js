@@ -134,10 +134,12 @@ class UpdateCategory extends Component {
         <Modal.Header>Update Category</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
-            <CategoryType
-              typeChangeHandler={this.typeChangeHandler}
-              categoryTypeId={category.categoryTypeId}
-            />
+            <Form.Field>
+              <CategoryType
+                typeChangeHandler={this.typeChangeHandler}
+                categoryTypeId={category.categoryTypeId}
+              />
+            </Form.Field>
             <Form.Field
               control={Input}
               placeholder="Name"

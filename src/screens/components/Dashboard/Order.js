@@ -1,13 +1,6 @@
 import React, { Component } from "react";
-import {
-  Segment,
-  Header,
-  Button,
-  Confirm,
-  Divider,
-  Grid,
-} from "semantic-ui-react";
-import Menu from "./Menu";
+import { Segment, Header, Button, Confirm, Divider } from "semantic-ui-react";
+import MenuModal from "./MenuModal";
 import Items from "./Items";
 import Axios from "axios";
 import { urls } from "../../../properties/properties";
@@ -23,6 +16,7 @@ class Order extends Component {
       disabled: true,
       openConfirm: false,
       openPrint: false,
+      openMenu: false,
       saved: true,
       orderCreated: false,
       order: {
@@ -37,6 +31,18 @@ class Order extends Component {
   toggleLoading = () => {
     this.setState({
       loading: !this.state.loading,
+    });
+  };
+
+  openMenu = () => {
+    this.setState({
+      openMenu: true,
+    });
+  };
+
+  closeMenu = () => {
+    this.setState({
+      openMenu: false,
     });
   };
 
@@ -148,6 +154,16 @@ class Order extends Component {
     });
   };
 
+  saveItems = (pItems) => {
+    let { order } = this.state;
+    order.items = pItems;
+    this.setState({
+      saved: false,
+      openMenu: false,
+      order: order,
+    });
+  };
+
   completeOrder = () => {
     const { order } = this.state;
     this.toggleLoading();
@@ -213,6 +229,7 @@ class Order extends Component {
       order,
       openConfirm,
       openPrint,
+      openMenu,
       saved,
       orderCreated,
       loading,
@@ -220,8 +237,8 @@ class Order extends Component {
     } = this.state;
     const { table } = this.props;
     return (
-      <Segment style={{ backgroundColor: "#e5e7e5" }}>
-        <Grid columns={2} stackable>
+      <Segment raised>
+        {/* <Grid columns={2} stackable>
           <Divider vertical></Divider>
 
           <Grid.Row verticalAlign="top">
@@ -232,96 +249,118 @@ class Order extends Component {
               <Menu addItem={this.addItem} />
             </Grid.Column>
 
-            <Grid.Column>
-              <Header as="h3" block color="white" inverted>
-                Order for {table.tableName}
-              </Header>
-              <Items
-                items={order.items}
-                increase={this.increase}
-                decrease={this.decrease}
-              />
-              <Taxes
-                order={order}
-                disabled={loading || disabled || !saved}
-                toggleInclude={this.toggleInclude}
-              />
-              <Divider />
-              {orderCreated ? (
-                <div>
-                  <Button
-                    floated="left"
-                    icon="payment"
-                    labelPosition="right"
-                    color="blue"
-                    content="Complete"
-                    loading={loading}
-                    disabled={!saved || loading || disabled}
-                    onClick={this.completeOrder}
-                  />
+            <Grid.Column> */}
+        <Header as="h3" block color="white" inverted>
+          Order for {table.tableName}
+        </Header>
+        <Items
+          items={order.items}
+          increase={this.increase}
+          decrease={this.decrease}
+        />
+        <Taxes
+          order={order}
+          disabled={loading || disabled || !saved}
+          toggleInclude={this.toggleInclude}
+        />
+        <Divider />
+        {orderCreated ? (
+          <div>
+            <Button
+              basic
+              floated="left"
+              icon="payment"
+              labelPosition="right"
+              color="blue"
+              content="Complete"
+              loading={loading}
+              disabled={!saved || loading || disabled}
+              onClick={this.completeOrder}
+            />
 
-                  <Button
-                    floated="left"
-                    icon="file alternate outline"
-                    labelPosition="right"
-                    color="blue"
-                    content="View Bill"
-                    loading={loading}
-                    disabled={!saved || loading || disabled}
-                    onClick={this.openPrint}
-                  />
+            <Button
+              basic
+              floated="left"
+              icon="file alternate outline"
+              labelPosition="right"
+              color="blue"
+              content="View Bill"
+              loading={loading}
+              disabled={!saved || loading || disabled}
+              onClick={this.openPrint}
+            />
 
-                  <Button
-                    positive
-                    floated="right"
-                    icon="save"
-                    labelPosition="right"
-                    content="Save"
-                    loading={loading}
-                    disabled={saved || loading || disabled}
-                    onClick={this.saveOrder}
-                  />
-                </div>
-              ) : (
-                <Button
-                  positive
-                  floated="right"
-                  icon="save"
-                  labelPosition="right"
-                  content="Create Order"
-                  loading={loading}
-                  disabled={order.items.length === 0 || loading || disabled}
-                  onClick={this.saveOrder}
-                />
-              )}
-              <Button
-                floated="right"
-                color="blue"
-                onClick={this.closeOrder}
-                loading={loading}
-                disabled={loading || disabled}
-              >
-                Cancel
-              </Button>
-              <Confirm
-                open={openConfirm}
-                header="Are you sure?"
-                content="You have not saved changes to the order!"
-                confirmButton="Yes"
-                onCancel={this.closeConfirm}
-                onConfirm={this.handleConfirm}
-                size="mini"
-              />
+            <Button
+              positive
+              floated="right"
+              icon="save"
+              labelPosition="right"
+              content="Save"
+              loading={loading}
+              disabled={saved || loading || disabled}
+              onClick={this.saveOrder}
+            />
+          </div>
+        ) : (
+          <Button
+            positive
+            floated="right"
+            icon="save"
+            labelPosition="right"
+            content="Create Order"
+            loading={loading}
+            disabled={order.items.length === 0 || loading || disabled}
+            onClick={this.saveOrder}
+          />
+        )}
+        <Button
+          floated="right"
+          color="blue"
+          onClick={this.closeOrder}
+          loading={loading}
+          disabled={loading || disabled}
+        >
+          {saved ? "Close" : "Cancel"}
+        </Button>
+        <Button
+          basic
+          floated="left"
+          icon="clipboard outline"
+          labelPosition="right"
+          color="blue"
+          content="Open Menu"
+          loading={loading}
+          disabled={loading || disabled}
+          onClick={this.openMenu}
+        />
+        <Confirm
+          open={openConfirm}
+          header="Are you sure?"
+          content="You have not saved changes to the order!"
+          confirmButton="Yes"
+          onCancel={this.closeConfirm}
+          onConfirm={this.handleConfirm}
+          size="mini"
+        />
 
-              <PrintModal
-                open={openPrint}
-                close={this.closePrint}
-                order={order}
-                table={table}
-              />
-            </Grid.Column>
+        <PrintModal
+          open={openPrint}
+          close={this.closePrint}
+          order={order}
+          table={table}
+        />
+
+        <MenuModal
+          open={openMenu}
+          close={this.closeMenu}
+          order={order}
+          save={this.saveItems}
+        />
+        <br />
+        <br />
+        {/* </Grid.Column>
           </Grid.Row>
-        </Grid>
+        </Grid> */}
       </Segment>
     );
   }

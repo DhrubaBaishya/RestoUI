@@ -11,14 +11,14 @@ class Table extends Component {
     const { table } = this.props;
     let tableStyle = table.orders.length > 0 ? tableOccupied : tableEmpty;
     return (
-      <Card raised>
+      <Card raised style={{ maxWidth: "200px" }}>
         <Card.Content style={tableStyle}>
           <Card.Header>{table.tableName}</Card.Header>
           <Card.Meta>
             Can serve <strong>{table.capacity}</strong> people
           </Card.Meta>
           <Card.Description>
-            {table.orders.length > 0 ? "Serving" : "Currently not being served"}
+            {table.orders.length > 0 ? "Serving" : "Available"}
           </Card.Description>
         </Card.Content>
         <Card.Content extra style={tableStyle}>

@@ -3,9 +3,10 @@ import authHeader from "../../service/authHeader";
 import { urls } from "../../properties/properties";
 import Axios from "axios";
 import Order from "./Dashboard/Order";
-import { Segment, Card, Header, Icon } from "semantic-ui-react";
+import { Segment, Card, Header, Icon, Divider } from "semantic-ui-react";
 import Table from "./Dashboard/Table";
 import { validateResponse } from "../../util/Util";
+import AreaLOV from "./Settings/Table/AreaLOV";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class Dashboard extends Component {
       tableList: [],
       openOrderMenu: false,
       refreshed: false,
+      selectedArea: "",
       areaList: [],
       table: {},
     };
@@ -30,6 +32,12 @@ class Dashboard extends Component {
     this.setState({
       refreshed: false,
       openOrderMenu: false,
+    });
+  };
+
+  areaChangeHandler = (value) => {
+    this.setState({
+      selectedArea: value,
     });
   };
 
@@ -68,30 +76,46 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { areaList, openOrderMenu, table } = this.state;
+    const { areaList, openOrderMenu, table, selectedArea } = this.state;
     let tables = areaList.reduce((prev, area) => {
       return prev + area.tables.length;
     }, 0);
     return (
       <div>
         {!openOrderMenu ? (
+          <div>
+            <AreaLOV
+              areaChangeHandler={this.areaChangeHandler}
+              value={selectedArea}
+            />
+            <Divider />
+          </div>
+        ) : (
+          ""
+        )}
+        {!openOrderMenu ? (
           tables > 0 ? (
-            areaList.map((area) => (
-              <Segment key={area.areaId} size="mini" basic>
-                <Header block inverted>
-                  {area.areaName}
-                </Header>
-                <Card.Group>
-                  {area.tables.map((table) => (
-                    <Table
-                      key={table.tableId}
-                      table={table}
-                      openOrder={this.openOrder}
-                    />
-                  ))}
-                </Card.Group>
-              </Segment>
-            ))
+            areaList.map((area) =>
+              area.areaId === selectedArea || selectedArea === "" ? (
+                <div>
+                  <Header block inverted>
+                    {area.areaName}
+                  </Header>
+                  <Card.Group>
+                    {area.tables.map((table) => (
+                      <Table
+                        key={table.tableId}
+                        table={table}
+                        openOrder={this.openOrder}
+                      />
+                    ))}
+                  </Card.Group>
+                  <Divider />
+                </div>
+              ) : (
+                ""
+              )
+            )
           ) : (
             <Segment placeholder>
               <Header icon color="grey">

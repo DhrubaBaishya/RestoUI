@@ -98,7 +98,9 @@ class AddCategory extends Component {
         <Modal.Header>Category Details</Modal.Header>
         <Modal.Content>
           <Form error={formError}>
-            <CategoryType typeChangeHandler={this.typeChangeHandler} />
+            <Form.Field>
+              <CategoryType typeChangeHandler={this.typeChangeHandler} />
+            </Form.Field>
             <Form.Field
               control={Input}
               placeholder="Name"

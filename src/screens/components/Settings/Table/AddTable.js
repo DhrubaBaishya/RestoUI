@@ -107,7 +107,9 @@ class AddTable extends Component {
               value={table.tableName}
               onChange={this.tableNameChangeHandler}
             />
-            <AreaLOV areaChangeHandler={this.areaChangeHandler} />
+            <Form.Field>
+              <AreaLOV areaChangeHandler={this.areaChangeHandler} />
+            </Form.Field>
             <Form.Field>
               <label>Table Capacity</label>
               <NumberInput
