@@ -1,18 +1,19 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Message, Input } from "semantic-ui-react";
+import { Form, Message, Input } from "semantic-ui-react";
 import NumberInput from "semantic-ui-react-numberinput";
 import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
 import AreaLOV from "./AreaLOV";
 import { validateResponse } from "../../../../util/Util";
+import AppModal from "../../Common/AppModal";
 
 class UpdateTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       formError: false,
-      adding: false,
+      loading: false,
       reload: false,
       oldTable: {
         tableId: "",
@@ -29,39 +30,9 @@ class UpdateTable extends Component {
     };
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (
-      nextProps.table.tableId !== this.props.table.tableId ||
-      this.state !== nextState
-    ) {
-      return true;
-    }
-    return false;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.table.tableId !== this.props.table.tableId) {
-      this.setState({
-        reload: !this.state.reload,
-        oldTable: {
-          tableId: this.props.table.tableId,
-          areaId: this.props.table.areaId,
-          tableName: this.props.table.tableName,
-          capacity: this.props.table.capacity,
-        },
-        table: {
-          tableId: this.props.table.tableId,
-          areaId: this.props.table.areaId,
-          tableName: this.props.table.tableName,
-          capacity: this.props.table.capacity,
-        },
-      });
-    }
-  }
-
-  toggleButtonLoading = () => {
+  toggleLoading = () => {
     this.setState({
-      adding: !this.state.adding,
+      loading: !this.state.loading,
     });
   };
 
@@ -121,63 +92,86 @@ class UpdateTable extends Component {
         errors: errors,
       });
     } else {
+      this.toggleLoading();
       Axios.post(urls.table, table, { headers: authHeader() })
         .then((response) => {
           if (validateResponse(response)) {
             this.props.update(oldTable, response.data.result[0]);
           }
+          this.toggleLoading();
           this.close();
         })
         .catch((msg) => {
+          this.toggleLoading();
           console.log(msg);
         });
     }
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.table.tableId !== this.props.table.tableId ||
+      this.state !== nextState
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.table.tableId !== this.props.table.tableId) {
+      this.setState({
+        reload: !this.state.reload,
+        oldTable: {
+          tableId: this.props.table.tableId,
+          areaId: this.props.table.areaId,
+          tableName: this.props.table.tableName,
+          capacity: this.props.table.capacity,
+        },
+        table: {
+          tableId: this.props.table.tableId,
+          areaId: this.props.table.areaId,
+          tableName: this.props.table.tableName,
+          capacity: this.props.table.capacity,
+        },
+      });
+    }
+  }
+
   render() {
-    const { table, adding, formError, errors } = this.state;
+    const { table, loading, formError, errors } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Table</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field
-              control={Input}
-              placeholder="Table Name"
-              value={table.tableName}
-              onChange={this.tableNameChangeHandler}
-            />
-            <Form.Field>
-              <AreaLOV
-                areaChangeHandler={this.areaChangeHandler}
-                value={table.areaId}
-              />
-            </Form.Field>
-            <Form.Field>
-              <label>Table Capacity</label>
-              <NumberInput
-                value={table.capacity}
-                onChange={this.changeCapacity}
-              />
-            </Form.Field>
-            <Message error negative list={errors} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.updateTable}
+      <AppModal
+        header="Update Table"
+        open={open}
+        close={this.close}
+        save={this.updateTable}
+        loading={loading}
+      >
+        <Form error={formError}>
+          <Form.Field
+            control={Input}
+            placeholder="Table Name"
+            value={table.tableName}
+            onChange={this.tableNameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Form.Field>
+            <AreaLOV
+              areaChangeHandler={this.areaChangeHandler}
+              value={table.areaId}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Table Capacity</label>
+            <NumberInput
+              value={table.capacity}
+              onChange={this.changeCapacity}
+            />
+          </Form.Field>
+          <Message error negative list={errors} />
+        </Form>
+      </AppModal>
     );
   }
 }

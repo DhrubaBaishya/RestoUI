@@ -22,3 +22,14 @@ export function validateResponse(response) {
     return true;
   else return false;
 }
+
+export function noResult(response) {
+  if (
+    response !== null &&
+    response.data !== null &&
+    response.data.result != null &&
+    response.data.result.length === 0
+  )
+    return true;
+  else return false;
+}

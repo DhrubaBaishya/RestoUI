@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Segment, Button, Divider, Icon } from "semantic-ui-react";
+import { Segment, Divider } from "semantic-ui-react";
 import Categories from "./Categories";
 import AddCategory from "./AddCategory";
+import AppButton from "../../Common/AppButton";
 
 class CategoryMenu extends Component {
   constructor(props) {
@@ -34,14 +35,11 @@ class CategoryMenu extends Component {
     return (
       <div>
         <Segment attached="bottom">
-          <Button
-            basic
-            size="medium"
-            color="brown"
+          <AppButton
+            title="Add Category"
+            icon="add"
             onClick={this.openAddCategory}
-          >
-            <Icon name="add" /> Add Category
-          </Button>
+          />
           <Divider />
           {categoryTypes.map((type) =>
             type.categories.length > 0 ? (

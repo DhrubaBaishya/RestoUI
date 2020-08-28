@@ -1,17 +1,13 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Segment,
-  Divider,
-  Icon,
-  Confirm,
-  Table,
-} from "semantic-ui-react";
+import { Segment, Divider, Confirm, Table } from "semantic-ui-react";
 import AddTable from "./AddTable";
 import Axios from "axios";
 import { urls } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
 import UpdateTable from "./UpdateTable";
+import AppButton from "../../Common/AppButton";
+import UpdateButton from "../../Common/UpdateButton";
+import DeleteButton from "../../Common/DeleteButton";
 
 class Tables extends Component {
   constructor(props) {
@@ -23,6 +19,7 @@ class Tables extends Component {
       openConfirm: false,
       table: {
         tableId: "",
+        areaId: "",
         tableName: "",
         capacity: "0",
       },
@@ -61,6 +58,9 @@ class Tables extends Component {
   };
 
   openUpdateTable = (pTable) => {
+    if (pTable.capacity === 0) {
+      pTable.capacity = "0";
+    }
     this.setState({
       ...this.state,
       openUpdateTable: true,
@@ -109,9 +109,7 @@ class Tables extends Component {
     return (
       <div>
         <Segment attached="bottom">
-          <Button basic size="medium" color="brown" onClick={this.openAddTable}>
-            <Icon name="add" /> Add Table
-          </Button>
+          <AppButton title="Add Table" icon="add" onClick={this.openAddTable} />
           <Divider />
 
           {areaList.map((area) =>
@@ -130,26 +128,14 @@ class Tables extends Component {
                   {area.tables.map((table) => (
                     <Table.Row key={area.areaId}>
                       <Table.Cell collapsing>
-                        <Button
-                          icon
-                          size="mini"
-                          basic
-                          color="blue"
+                        <UpdateButton
                           loading={loading}
                           onClick={() => this.openUpdateTable(table)}
-                        >
-                          <Icon name="edit" />
-                        </Button>
-                        <Button
-                          icon
-                          size="mini"
+                        />
+                        <DeleteButton
                           loading={loading}
-                          basic
-                          color="orange"
                           onClick={() => this.showConfirm(table)}
-                        >
-                          <Icon name="trash alternate" />
-                        </Button>
+                        />
                       </Table.Cell>
                       <Table.Cell>{table.tableName}</Table.Cell>
                       <Table.Cell collapsing textAlign="center">

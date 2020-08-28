@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { businessDetails } from "../../properties/properties";
+import { businessDetails } from "../../../properties/properties";
 
-class PrintOrder extends Component {
+class Bill extends Component {
   render() {
-    const { order, table } = this.props;
+    const { order } = this.props;
     let items = order.items;
     let totalAmount = items.reduce((prev, item) => {
       return prev + item.quantity * item.price;
@@ -34,8 +34,12 @@ class PrintOrder extends Component {
         <table style={{ width: "100%" }}>
           <tbody>
             <tr>
-              <td style={{ textAlign: "left" }}>Bill No: {order.orderId}</td>
-              <td style={{ textAlign: "center" }}>Table: {table.tableName}</td>
+              <td style={{ textAlign: "left" }}>
+                Bill No: <strong>{order.orderId}</strong>
+              </td>
+              <td style={{ textAlign: "center" }}>
+                Table: <strong>{order.tableName}</strong>
+              </td>
               <td style={{ textAlign: "right" }}>{order.properCreationDate}</td>
             </tr>
           </tbody>
@@ -121,4 +125,4 @@ class PrintOrder extends Component {
   }
 }
 
-export default PrintOrder;
+export default Bill;

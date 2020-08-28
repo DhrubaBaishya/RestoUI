@@ -2,6 +2,9 @@ const host = "http://localhost:8710";
 
 export const urls = {
   login: host + "/auth-service/api/auth/login",
+  admin: host + "/auth-service/api/auth/admin",
+  manager: host + "/auth-service/api/auth/manager",
+  reception: host + "/auth-service/api/auth/reception",
   area: host + "/app-service/api/v1/area",
   table: host + "/app-service/api/v1/table",
   increateTableCapacity: host + "/app-service/api/v1/table/increase",
@@ -16,6 +19,7 @@ export const urls = {
   tableOrder: host + "/app-service/api/v1/order/table/",
   order: host + "/app-service/api/v1/order",
   completeOrder: host + "/app-service/api/v1/order/complete",
+  cancelOrder: host + "/app-service/api/v1/order/cancel",
 };
 
 export const errorMessages = {
@@ -37,7 +41,7 @@ export const warnings = {
 };
 
 export const general = {
-  pageSize: 5,
+  pageSize: 40,
 };
 
 export const businessDetails = {

@@ -10,7 +10,7 @@ class MenuSettings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeItem: 1,
+      activeItem: 2,
       categoryTypes: [],
     };
   }

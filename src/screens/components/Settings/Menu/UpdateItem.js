@@ -1,16 +1,17 @@
 import React, { Component } from "react";
-import { Modal, Form, Input, Message, Button } from "semantic-ui-react";
+import { Form, Input, Message } from "semantic-ui-react";
 import Category from "./Category";
 import Axios from "axios";
 import { urls, errorMessages } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
+import AppModal from "../../Common/AppModal";
 
 class UpdateItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       formError: false,
-      adding: false,
+      loading: false,
       error: "",
       reload: false,
       oldItem: {
@@ -58,9 +59,9 @@ class UpdateItem extends Component {
     }
   }
 
-  toggleAdding = () => {
+  toggleLoading = () => {
     this.setState({
-      adding: !this.state.adding,
+      loading: !this.state.loading,
     });
   };
 
@@ -130,7 +131,7 @@ class UpdateItem extends Component {
         formError: true,
       });
     } else {
-      this.toggleAdding();
+      this.toggleLoading();
       this.close();
       Axios.post(urls.item, item, { headers: authHeader() })
         .then((response) => {
@@ -140,56 +141,46 @@ class UpdateItem extends Component {
           ) {
             this.props.updateItem(response.data.result[0], oldItem);
           }
-          this.toggleAdding();
+          this.toggleLoading();
         })
         .catch((msg) => {
-          this.toggleAdding();
+          this.toggleLoading();
         });
     }
   };
 
   render() {
-    const { formError, item, adding, error } = this.state;
+    const { formError, item, loading, error } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Item</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field
-              control={Input}
-              placeholder="Name"
-              value={item.itemName}
-              onChange={this.nameChangeHandler}
-            />
-            <Form.Field>
-              <Input
-                value={item.price}
-                placeholder="Price"
-                onChange={this.priceChangeHandler}
-              />
-            </Form.Field>
-            <Category
-              categoryChangeHandler={this.categoryChangeHandler}
-              categoryId={item.categoryId}
-            />
-            <Message error content={error} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.updateItem}
+      <AppModal
+        header="Update Item"
+        open={open}
+        close={this.close}
+        save={this.updateItem}
+        loading={loading}
+      >
+        <Form error={formError}>
+          <Form.Field
+            control={Input}
+            placeholder="Name"
+            value={item.itemName}
+            onChange={this.nameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Form.Field>
+            <Input
+              value={item.price}
+              placeholder="Price"
+              onChange={this.priceChangeHandler}
+            />
+          </Form.Field>
+          <Category
+            categoryChangeHandler={this.categoryChangeHandler}
+            categoryId={item.categoryId}
+          />
+          <Message error content={error} />
+        </Form>
+      </AppModal>
     );
   }
 }

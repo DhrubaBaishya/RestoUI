@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Input, Message } from "semantic-ui-react";
+import { Form, Input, Message } from "semantic-ui-react";
 import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
+import AppModal from "../../Common/AppModal";
 
 class AddArea extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      adding: false,
+      loading: false,
       formError: false,
       errorMessage: "",
       area: {
@@ -17,9 +18,9 @@ class AddArea extends Component {
     };
   }
 
-  toggleAdding = () => {
+  toggleLoading = () => {
     this.setState({
-      adding: !this.state.adding,
+      loading: !this.state.loading,
     });
   };
 
@@ -49,10 +50,10 @@ class AddArea extends Component {
         errorMessage: errorMessages.emptyAreaName,
       });
     } else {
-      this.toggleAdding();
+      this.toggleLoading();
       Axios.post(urls.area, area, { headers: authHeader() })
         .then((response) => {
-          this.toggleAdding();
+          this.toggleLoading();
           if (
             response.data !== null &&
             response.data.result !== null &&
@@ -63,7 +64,7 @@ class AddArea extends Component {
           this.close();
         })
         .catch((err) => {
-          this.toggleAdding();
+          this.toggleLoading();
           console.log(err);
           this.toggleAdding();
           this.setState({
@@ -75,36 +76,26 @@ class AddArea extends Component {
   };
 
   render() {
-    const { area, formError, adding, errorMessage } = this.state;
+    const { area, formError, loading, errorMessage } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Area Details</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field
-              control={Input}
-              placeholder="Area Name"
-              value={area.areaName}
-              onChange={this.areaNameChangeHandler}
-            />
-            <Message error content={errorMessage} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.addArea}
+      <AppModal
+        header="Area Details"
+        open={open}
+        close={this.close}
+        save={this.addArea}
+        loading={loading}
+      >
+        <Form error={formError}>
+          <Form.Field
+            control={Input}
+            placeholder="Area Name"
+            value={area.areaName}
+            onChange={this.areaNameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Message error content={errorMessage} />
+        </Form>
+      </AppModal>
     );
   }
 }

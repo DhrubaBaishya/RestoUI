@@ -1,12 +1,19 @@
 import React, { Component } from "react";
-import { Segment, Header, Button, Confirm, Divider } from "semantic-ui-react";
+import {
+  Segment,
+  Header,
+  Button,
+  Confirm,
+  Divider,
+  Modal,
+} from "semantic-ui-react";
 import MenuModal from "./MenuModal";
 import Items from "./Items";
 import Axios from "axios";
 import { urls } from "../../../properties/properties";
 import authHeader from "../../../service/authHeader";
-import PrintModal from "./PrintModal";
 import Taxes from "./Taxes";
+import BillModal from "./BillModal";
 
 class Order extends Component {
   constructor(props) {
@@ -16,12 +23,14 @@ class Order extends Component {
       disabled: true,
       openConfirm: false,
       openCompleteConfirm: false,
-      openPrint: false,
+      openCancelConfirm: false,
+      openBill: false,
       openMenu: false,
       saved: true,
       orderCreated: false,
       order: {
         tableId: this.props.table.tableId,
+        tableName: this.props.table.tableName,
         status: "NEW",
         items: [],
         taxes: [],
@@ -47,15 +56,15 @@ class Order extends Component {
     });
   };
 
-  openPrint = () => {
+  openBill = () => {
     this.setState({
-      openPrint: true,
+      openBill: true,
     });
   };
 
-  closePrint = () => {
+  closeBill = () => {
     this.setState({
-      openPrint: false,
+      openBill: false,
     });
   };
 
@@ -89,6 +98,22 @@ class Order extends Component {
 
   handleCompleteConfirm = () => {
     this.completeOrder();
+  };
+
+  openCancelConfirm = () => {
+    this.setState({
+      openCancelConfirm: true,
+    });
+  };
+
+  closeCancelConfirm = () => {
+    this.setState({
+      openCancelConfirm: false,
+    });
+  };
+
+  handleCancelConfirm = () => {
+    this.cancelOrder();
   };
 
   closeOrder = () => {
@@ -195,6 +220,20 @@ class Order extends Component {
       });
   };
 
+  cancelOrder = () => {
+    const { order } = this.state;
+    this.toggleLoading();
+    Axios.post(urls.cancelOrder, order, { headers: authHeader() })
+      .then((response) => {
+        this.closeOrder();
+        this.toggleLoading();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.toggleLoading();
+      });
+  };
+
   saveOrder = () => {
     const { order } = this.state;
     this.toggleLoading();
@@ -246,7 +285,8 @@ class Order extends Component {
       order,
       openConfirm,
       openCompleteConfirm,
-      openPrint,
+      openCancelConfirm,
+      openBill,
       openMenu,
       saved,
       orderCreated,
@@ -256,18 +296,6 @@ class Order extends Component {
     const { table } = this.props;
     return (
       <Segment raised>
-        {/* <Grid columns={2} stackable>
-          <Divider vertical></Divider>
-
-          <Grid.Row verticalAlign="top">
-            <Grid.Column>
-              <Header as="h3" block color="blue">
-                Menu
-              </Header>
-              <Menu addItem={this.addItem} />
-            </Grid.Column>
-
-            <Grid.Column> */}
         <Header as="h3" block color="white" inverted>
           Order for {table.tableName}
         </Header>
@@ -299,13 +327,25 @@ class Order extends Component {
             <Button
               basic
               floated="left"
+              icon="close"
+              labelPosition="right"
+              color="blue"
+              content="Cancel"
+              loading={loading}
+              disabled={!saved || loading || disabled}
+              onClick={this.openCancelConfirm}
+            />
+
+            <Button
+              basic
+              floated="left"
               icon="file alternate outline"
               labelPosition="right"
               color="blue"
               content="View Bill"
               loading={loading}
               disabled={!saved || loading || disabled}
-              onClick={this.openPrint}
+              onClick={this.openBill}
             />
 
             <Button
@@ -361,21 +401,63 @@ class Order extends Component {
           size="mini"
         />
 
-        <Confirm
-          open={openCompleteConfirm}
-          content="Are you sure?"
-          confirmButton="Complete"
-          onCancel={this.closeCompleteConfirm}
-          onConfirm={this.handleCompleteConfirm}
+        <Modal
           size="mini"
-        />
+          open={openCompleteConfirm}
+          onClose={this.closeCompleteConfirm}
+        >
+          <Modal.Header>Complete Confirmation</Modal.Header>
+          <Modal.Content>
+            <p>Are you sure you want to complete the order?</p>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              loading={loading}
+              disabled={loading}
+              onClick={this.closeCompleteConfirm}
+            >
+              Cancel
+            </Button>
+            <Button
+              positive
+              loading={loading}
+              disabled={loading}
+              onClick={this.handleCompleteConfirm}
+            >
+              Confirm
+            </Button>
+          </Modal.Actions>
+        </Modal>
 
-        <PrintModal
-          open={openPrint}
-          close={this.closePrint}
-          order={order}
-          table={table}
-        />
+        <Modal
+          size="mini"
+          open={openCancelConfirm}
+          onClose={this.closeCancelConfirm}
+        >
+          <Modal.Header>Cancel Confirmation</Modal.Header>
+          <Modal.Content>
+            <p>Are you sure you want to cancel the order?</p>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              loading={loading}
+              disabled={loading}
+              onClick={this.closeCancelConfirm}
+            >
+              Cancel
+            </Button>
+            <Button
+              positive
+              loading={loading}
+              disabled={loading}
+              onClick={this.handleCancelConfirm}
+            >
+              Confirm
+            </Button>
+          </Modal.Actions>
+        </Modal>
+
+        <BillModal open={openBill} close={this.closeBill} order={order} />
 
         <MenuModal
           open={openMenu}

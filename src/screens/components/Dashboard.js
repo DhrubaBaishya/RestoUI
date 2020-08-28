@@ -3,16 +3,16 @@ import authHeader from "../../service/authHeader";
 import { urls } from "../../properties/properties";
 import Axios from "axios";
 import Order from "./Dashboard/Order";
-import { Segment, Card, Header, Icon, Divider } from "semantic-ui-react";
+import { Segment, Card, Header, Icon } from "semantic-ui-react";
 import Table from "./Dashboard/Table";
 import { validateResponse } from "../../util/Util";
-import AreaLOV from "./Settings/Table/AreaLOV";
+import AreaMenu from "./Common/AreaMenu";
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tableList: [],
+      loading: true,
       openOrderMenu: false,
       refreshed: false,
       selectedArea: "",
@@ -47,7 +47,6 @@ class Dashboard extends Component {
         .then((response) => {
           if (validateResponse(response)) {
             this.setState({
-              ...this.state,
               refreshed: true,
               areaList: response.data.result,
             });
@@ -64,7 +63,7 @@ class Dashboard extends Component {
       .then((response) => {
         if (validateResponse(response)) {
           this.setState({
-            ...this.state,
+            loading: false,
             refreshed: true,
             areaList: response.data.result,
           });
@@ -83,13 +82,7 @@ class Dashboard extends Component {
     return (
       <div>
         {!openOrderMenu ? (
-          <div>
-            <AreaLOV
-              areaChangeHandler={this.areaChangeHandler}
-              value={selectedArea}
-            />
-            <Divider />
-          </div>
+          <AreaMenu areaChangeHandler={this.areaChangeHandler} />
         ) : (
           ""
         )}
@@ -97,10 +90,8 @@ class Dashboard extends Component {
           tables > 0 ? (
             areaList.map((area) =>
               area.areaId === selectedArea || selectedArea === "" ? (
-                <div>
-                  <Header block inverted>
-                    {area.areaName}
-                  </Header>
+                <Segment>
+                  <Header block>{area.areaName}</Header>
                   <Card.Group>
                     {area.tables.map((table) => (
                       <Table
@@ -110,8 +101,7 @@ class Dashboard extends Component {
                       />
                     ))}
                   </Card.Group>
-                  <Divider />
-                </div>
+                </Segment>
               ) : (
                 ""
               )

@@ -14,6 +14,7 @@ class TableSettings extends Component {
       areaList: [],
       table: {
         id: "",
+        areaId: "",
         tableName: "",
         capacity: "0",
       },

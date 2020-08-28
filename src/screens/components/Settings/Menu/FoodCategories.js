@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { Table, Divider, Confirm, Button, Icon } from "semantic-ui-react";
+import { Table, Divider, Confirm } from "semantic-ui-react";
 import UpdateItem from "./UpdateItem";
 import Axios from "axios";
 import { urls } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
+import DeleteButton from "../../Common/DeleteButton";
+import UpdateButton from "../../Common/UpdateButton";
 
 class FoodCategories extends Component {
   constructor(props) {
@@ -98,26 +100,14 @@ class FoodCategories extends Component {
             {category.items.map((item) => (
               <Table.Row key={item.id}>
                 <Table.Cell collapsing>
-                  <Button
-                    icon
-                    size="mini"
-                    basic
-                    color="blue"
+                  <UpdateButton
                     loading={loading}
                     onClick={() => this.openUpdate(item)}
-                  >
-                    <Icon name="edit" />
-                  </Button>
-                  <Button
-                    icon
-                    size="mini"
+                  />
+                  <DeleteButton
                     loading={loading}
-                    basic
-                    color="orange"
                     onClick={() => this.showConfirm(item)}
-                  >
-                    <Icon name="trash alternate" />
-                  </Button>
+                  />
                 </Table.Cell>
                 <Table.Cell>{item.itemName}</Table.Cell>
                 <Table.Cell collapsing textAlign="right">

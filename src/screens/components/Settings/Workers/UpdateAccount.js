@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Input, Message } from "semantic-ui-react";
+import { Form, Input, Message } from "semantic-ui-react";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
 import { errorMessages, urls } from "../../../../properties/properties";
+import AppModal from "../../Common/AppModal";
 
 class UpdateAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      adding: false,
+      loading: false,
       formError: false,
       error: "",
       person: {
@@ -19,9 +20,9 @@ class UpdateAccount extends Component {
     };
   }
 
-  toggleAdding = () => {
+  toggleLoading = () => {
     this.setState({
-      adding: !this.state.adding,
+      loading: !this.state.loading,
     });
   };
 
@@ -106,10 +107,10 @@ class UpdateAccount extends Component {
         formError: true,
       });
     } else {
-      this.toggleAdding();
+      this.toggleLoading();
       Axios.post(urls.person, person, { headers: authHeader() })
         .then((response) => {
-          this.toggleAdding();
+          this.toggleLoading();
           if (
             response.data.result !== null &&
             response.data.result.length > 0
@@ -119,7 +120,7 @@ class UpdateAccount extends Component {
           this.close();
         })
         .catch((err) => {
-          this.toggleAdding();
+          this.toggleLoading();
           if (err.response) {
             this.setState({
               error: err.response.data.details,
@@ -131,43 +132,33 @@ class UpdateAccount extends Component {
   };
 
   render() {
-    const { adding, formError, person, error } = this.state;
+    const { loading, formError, person, error } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Account</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field
-              control={Input}
-              placeholder="Person Name"
-              value={person.fullName}
-              onChange={this.fullNameChangeHandler}
-            />
-            <Form.Field>
-              <Input
-                value={person.phoneNumber}
-                placeholder="Phone Number"
-                onChange={this.phNumChangeHandler}
-              />
-            </Form.Field>
-            <Message error content={error} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.updateAccount}
+      <AppModal
+        header="Update Account"
+        open={open}
+        close={this.close}
+        save={this.updateAccount}
+        loading={loading}
+      >
+        <Form error={formError}>
+          <Form.Field
+            control={Input}
+            placeholder="Person Name"
+            value={person.fullName}
+            onChange={this.fullNameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Form.Field>
+            <Input
+              value={person.phoneNumber}
+              placeholder="Phone Number"
+              onChange={this.phNumChangeHandler}
+            />
+          </Form.Field>
+          <Message error content={error} />
+        </Form>
+      </AppModal>
     );
   }
 }

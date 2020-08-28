@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Message, Input } from "semantic-ui-react";
+import { Form, Message, Input } from "semantic-ui-react";
 import NumberInput from "semantic-ui-react-numberinput";
 import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
 import AreaLOV from "./AreaLOV";
 import { validateResponse } from "../../../../util/Util";
+import AppModal from "../../Common/AppModal";
 
 class AddTable extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class AddTable extends Component {
     };
   }
 
-  toggleButtonLoading = () => {
+  toggleLoading = () => {
     this.setState({
       adding: !this.state.adding,
     });
@@ -81,14 +82,17 @@ class AddTable extends Component {
         errors: errors,
       });
     } else {
+      this.toggleLoading();
       Axios.post(urls.table, table, { headers: authHeader() })
         .then((response) => {
+          this.toggleLoading();
           if (validateResponse(response)) {
             this.props.add(response.data.result[0]);
           }
           this.close();
         })
         .catch((msg) => {
+          this.toggleLoading();
           console.log(msg);
         });
     }
@@ -96,45 +100,35 @@ class AddTable extends Component {
 
   render() {
     const { table, adding, formError, errors } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Table Details</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field
-              control={Input}
-              placeholder="Table Name"
-              value={table.tableName}
-              onChange={this.tableNameChangeHandler}
-            />
-            <Form.Field>
-              <AreaLOV areaChangeHandler={this.areaChangeHandler} />
-            </Form.Field>
-            <Form.Field>
-              <label>Table Capacity</label>
-              <NumberInput
-                value={table.capacity}
-                onChange={this.changeCapacity}
-              />
-            </Form.Field>
-            <Message error negative list={errors} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.addTable}
+      <AppModal
+        header="Table Details"
+        open={open}
+        close={this.close}
+        save={this.addTable}
+        loading={adding}
+      >
+        <Form error={formError}>
+          <Form.Field
+            control={Input}
+            placeholder="Table Name"
+            value={table.tableName}
+            onChange={this.tableNameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Form.Field>
+            <AreaLOV areaChangeHandler={this.areaChangeHandler} />
+          </Form.Field>
+          <Form.Field>
+            <label>Table Capacity</label>
+            <NumberInput
+              value={table.capacity}
+              onChange={this.changeCapacity}
+            />
+          </Form.Field>
+          <Message error negative list={errors} />
+        </Form>
+      </AppModal>
     );
   }
 }

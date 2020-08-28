@@ -28,6 +28,9 @@
   padding-right: 8px !important;
 }
 .navBar {
-  background-color: #c2d8be !important;
+  background-color: #2471a3 !important;
   border-radius: 0% !important;
+}
+.navItem {
+  color: #fff !important;
 }

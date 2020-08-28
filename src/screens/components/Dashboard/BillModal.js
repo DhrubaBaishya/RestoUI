@@ -1,24 +1,20 @@
 import React, { Component } from "react";
-import PrintOrder from "../PrintOrder";
 import { Modal, Button, Icon } from "semantic-ui-react";
 import ReactToPrint from "react-to-print";
+import Bill from "../Common/Bill";
 
-class PrintModal extends Component {
+class BillModal extends Component {
   close = () => {
     this.props.close();
   };
 
   render() {
-    const { open, order, table } = this.props;
+    const { open, order } = this.props;
     return (
       <Modal open={open} onClose={this.close} size="mini">
         <Modal.Content scrolling>
           <Modal.Description>
-            <PrintOrder
-              order={order}
-              table={table}
-              ref={(el) => (this.componentRef = el)}
-            />
+            <Bill order={order} ref={(el) => (this.componentRef = el)} />
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
@@ -37,4 +33,4 @@ class PrintModal extends Component {
   }
 }
 
-export default PrintModal;
+export default BillModal;

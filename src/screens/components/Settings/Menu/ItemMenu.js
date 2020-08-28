@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Segment, Button, Icon, Divider, Form } from "semantic-ui-react";
+import { Segment, Divider, Form } from "semantic-ui-react";
 import CategoryType from "./CategoryType";
 import FoodCategories from "./FoodCategories";
 import AddItem from "./AddItem";
+import AppButton from "../../Common/AppButton";
 
 class ItemMenu extends Component {
   constructor(props) {
@@ -50,14 +51,11 @@ class ItemMenu extends Component {
           <Form>
             <Form.Group inline>
               <Form.Field>
-                <Button
-                  basic
-                  size="medium"
-                  color="brown"
+                <AppButton
+                  title="Add Item"
+                  icon="add"
                   onClick={this.openAddItem}
-                >
-                  <Icon name="add" /> Add Item
-                </Button>
+                />
               </Form.Field>
               <Form.Field>
                 <CategoryType typeChangeHandler={this.changeCategoryType} />

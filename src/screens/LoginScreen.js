@@ -75,7 +75,7 @@ class LoginScreen extends Component {
           this.setState({
             error: true,
             message: [
-              error === undefined
+              error !== undefined
                 ? error.response.status === 401
                   ? error.response.data.details
                   : errorMessages.tryAgain

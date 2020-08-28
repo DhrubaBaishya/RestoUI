@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { Table, Icon, Button, Confirm } from "semantic-ui-react";
+import { Table, Confirm } from "semantic-ui-react";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
 import { urls } from "../../../../properties/properties";
 import UpdateCategory from "./UpdateCategory";
+import DeleteButton from "../../Common/DeleteButton";
+import UpdateButton from "../../Common/UpdateButton";
 
 class Categories extends Component {
   constructor(props) {
@@ -97,26 +99,14 @@ class Categories extends Component {
             {categories.map((category) => (
               <Table.Row key={category.id}>
                 <Table.Cell collapsing>
-                  <Button
-                    icon
-                    size="mini"
-                    basic
-                    color="blue"
+                  <UpdateButton
                     loading={loading}
                     onClick={() => this.openUpdate(category)}
-                  >
-                    <Icon name="edit" />
-                  </Button>
-                  <Button
-                    icon
-                    size="mini"
+                  />
+                  <DeleteButton
                     loading={loading}
-                    basic
-                    color="orange"
                     onClick={() => this.showConfirm(category)}
-                  >
-                    <Icon name="trash alternate" />
-                  </Button>
+                  />
                 </Table.Cell>
                 <Table.Cell>{category.categoryName}</Table.Cell>
                 <Table.Cell collapsing textAlign="right">

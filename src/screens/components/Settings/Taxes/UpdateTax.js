@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { Modal, Form, Input, Button, Message, Select } from "semantic-ui-react";
+import { Form, Input, Message, Select } from "semantic-ui-react";
 import { errorMessages, urls } from "../../../../properties/properties";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
+import AppModal from "../../Common/AppModal";
 
 class UpdateTax extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      adding: false,
+      loading: false,
       formError: false,
       error: "",
       tax: {
@@ -25,9 +26,9 @@ class UpdateTax extends Component {
     };
   }
 
-  toggleAdding = () => {
+  toggleLoading = () => {
     this.setState({
-      adding: !this.state.adding,
+      loading: !this.state.loading,
     });
   };
 
@@ -101,15 +102,15 @@ class UpdateTax extends Component {
         formError: true,
       });
     } else {
-      this.toggleAdding();
+      this.toggleLoading();
       Axios.post(urls.tax, tax, { headers: authHeader() })
         .then((response) => {
-          this.toggleAdding();
+          this.toggleLoading();
           this.close();
           this.props.updateTax(response.data.result[0]);
         })
         .catch((err) => {
-          this.toggleAdding();
+          this.toggleLoading();
           this.setState({
             error: errorMessages.tryAgain,
             formError: true,
@@ -149,51 +150,48 @@ class UpdateTax extends Component {
   }
 
   render() {
-    const { adding, formError, error, tax, values, selectedValue } = this.state;
+    const {
+      loading,
+      formError,
+      error,
+      tax,
+      values,
+      selectedValue,
+    } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Tax</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field
-              control={Input}
-              placeholder="Name"
-              value={tax.taxName}
-              onChange={this.nameChangeHandler}
-            />
-            <Form.Field>
-              <Input
-                value={tax.percentage}
-                placeholder="Percentage"
-                onChange={this.percentageChangeHandler}
-              />
-            </Form.Field>
-            <Form.Field
-              options={values}
-              control={Select}
-              placeholder="Type"
-              value={selectedValue}
-              onChange={this.valueChangeListener}
-              search
-            />
-            <Message error content={error} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.updateTax}
+      <AppModal
+        header="Update Tax"
+        open={open}
+        close={this.close}
+        save={this.updateTax}
+        loading={loading}
+      >
+        <Form error={formError}>
+          <Form.Field
+            control={Input}
+            placeholder="Name"
+            value={tax.taxName}
+            onChange={this.nameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Form.Field>
+            <Input
+              value={tax.percentage}
+              placeholder="Percentage"
+              onChange={this.percentageChangeHandler}
+            />
+          </Form.Field>
+          <Form.Field
+            options={values}
+            control={Select}
+            placeholder="Type"
+            value={selectedValue}
+            onChange={this.valueChangeListener}
+            search
+          />
+          <Message error content={error} />
+        </Form>
+      </AppModal>
     );
   }
 }

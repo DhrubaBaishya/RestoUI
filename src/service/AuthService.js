@@ -26,6 +26,25 @@ class AuthService {
     const cookies = new Cookies();
     return cookies.get("user");
   }
+
+  getRole() {
+    const cookies = new Cookies();
+    return cookies.get("user").roles[0];
+  }
+
+  checkOrderAccess() {
+    return ["ROLE_MANAGER", "ROLE_ADMIN"].includes(this.getRole());
+  }
+
+  checkReservationAccess() {
+    return ["ROLE_RECEPTION", "ROLE_MANAGER", "ROLE_ADMIN"].includes(
+      this.getRole()
+    );
+  }
+
+  checkSettingsAccess() {
+    return ["ROLE_ADMIN"].includes(this.getRole());
+  }
 }
 
 export default new AuthService();

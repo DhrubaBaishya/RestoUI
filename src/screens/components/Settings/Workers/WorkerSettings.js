@@ -8,6 +8,7 @@ import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
 import { urls, general } from "../../../../properties/properties";
 import UpdateAccount from "./UpdateAccount";
+import AppButton from "../../Common/AppButton";
 
 class WorkerSettings extends Component {
   constructor(props) {
@@ -164,9 +165,11 @@ class WorkerSettings extends Component {
         <Form>
           <Form.Group inline>
             <Form.Field>
-              <Button basic size="medium" color="brown" onClick={this.openAdd}>
-                <Icon name="add" /> Add Account
-              </Button>
+              <AppButton
+                title="Add Account"
+                icon="add"
+                onClick={this.openAdd}
+              />
             </Form.Field>
             <Form.Field>
               <Active changeStatus={this.changeStatus} selectedValue={status} />

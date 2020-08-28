@@ -5,12 +5,14 @@ import { Menu, Segment, Image } from "semantic-ui-react";
 import logo from "../assets/images/canvas.png";
 import Settings from "./components/Settings";
 import Dashboard from "./components/Dashboard";
+import Orders from "./components/Orders/Orders";
+import AuthService from "../service/AuthService";
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeItem: 1,
+      activeItem: 4,
     };
   }
 
@@ -29,7 +31,7 @@ class Home extends Component {
       case 1:
         return <Dashboard />;
       case 2:
-        return <Dashboard />;
+        return <Orders />;
       case 3:
         return <Dashboard />;
       case 4:
@@ -38,6 +40,8 @@ class Home extends Component {
         return <Dashboard />;
     }
   }
+
+  componentDidMount() {}
 
   render() {
     const { activeItem } = this.state;
@@ -52,26 +56,47 @@ class Home extends Component {
             index={1}
             active={activeItem === 1}
             onClick={this.changeMenu}
+            className="navItem"
           />
+          {AuthService.checkOrderAccess() ? (
+            <Menu.Item
+              name="Orders"
+              index={2}
+              active={activeItem === 2}
+              onClick={this.changeMenu}
+              className="navItem"
+            />
+          ) : (
+            ""
+          )}
+          {AuthService.checkReservationAccess() ? (
+            <Menu.Item
+              name="Reservations"
+              index={3}
+              active={activeItem === 3}
+              onClick={this.changeMenu}
+              className="navItem"
+            />
+          ) : (
+            ""
+          )}
+          {AuthService.checkSettingsAccess() ? (
+            <Menu.Item
+              name="Settings"
+              index={4}
+              active={activeItem === 4}
+              onClick={this.changeMenu}
+              className="navItem"
+            />
+          ) : (
+            ""
+          )}
           <Menu.Item
-            name="Orders"
-            index={2}
-            active={activeItem === 2}
-            onClick={this.changeMenu}
+            name="Logout"
+            position="right"
+            onClick={this.logout}
+            className="navItem"
           />
-          <Menu.Item
-            name="Sales"
-            index={3}
-            active={activeItem === 3}
-            onClick={this.changeMenu}
-          />
-          <Menu.Item
-            name="Settings"
-            index={4}
-            active={activeItem === 4}
-            onClick={this.changeMenu}
-          />
-          <Menu.Item name="Logout" position="right" onClick={this.logout} />
         </Menu>
 
         <Segment basic>{this.segment()}</Segment>

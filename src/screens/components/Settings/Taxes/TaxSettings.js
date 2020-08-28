@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import { Form, Button, Icon, Divider, Table, Confirm } from "semantic-ui-react";
+import { Form, Divider, Table, Confirm } from "semantic-ui-react";
 import AddTax from "./AddTax";
 import Axios from "axios";
 import { urls } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
 import UpdateTax from "./UpdateTax";
+import AppButton from "../../Common/AppButton";
+import UpdateButton from "../../Common/UpdateButton";
+import DeleteButton from "../../Common/DeleteButton";
 
 class TaxSettings extends Component {
   constructor(props) {
@@ -12,6 +15,7 @@ class TaxSettings extends Component {
     this.state = {
       openAdd: false,
       openUpdate: false,
+      loading: false,
       tax: {
         taxId: "",
         taxName: "",
@@ -22,6 +26,12 @@ class TaxSettings extends Component {
       openConfirm: false,
     };
   }
+
+  toggleLoading = () => {
+    this.setState({
+      loading: !this.state.loading,
+    });
+  };
 
   openAdd = () => {
     this.setState({
@@ -68,11 +78,14 @@ class TaxSettings extends Component {
 
   delete = () => {
     const { tax } = this.state;
+    this.toggleLoading();
     Axios.delete(urls.tax + "/" + tax.taxId, { headers: authHeader() })
       .then((response) => {
+        this.toggleLoading();
         this.deleteTax();
       })
       .catch((err) => {
+        this.toggleLoading();
         console.log(err);
       });
   };
@@ -119,15 +132,20 @@ class TaxSettings extends Component {
   }
 
   render() {
-    const { openAdd, openUpdate, tax, taxList, openConfirm } = this.state;
+    const {
+      openAdd,
+      openUpdate,
+      tax,
+      taxList,
+      openConfirm,
+      loading,
+    } = this.state;
     return (
       <div>
         <Form>
           <Form.Group inline>
             <Form.Field>
-              <Button basic size="medium" color="brown" onClick={this.openAdd}>
-                <Icon name="add" /> Add Tax
-              </Button>
+              <AppButton title="Add Tax" icon="add" onClick={this.openAdd} />
             </Form.Field>
           </Form.Group>
         </Form>
@@ -146,24 +164,14 @@ class TaxSettings extends Component {
             {taxList.map((pTax) => (
               <Table.Row>
                 <Table.Cell collapsing>
-                  <Button
-                    icon
-                    size="mini"
-                    basic
-                    color="blue"
+                  <UpdateButton
+                    loading={loading}
                     onClick={() => this.openUpdate(pTax)}
-                  >
-                    <Icon name="edit" />
-                  </Button>
-                  <Button
-                    icon
-                    size="mini"
-                    basic
-                    color="orange"
+                  />
+                  <DeleteButton
+                    loading={loading}
                     onClick={() => this.openConfirm(pTax)}
-                  >
-                    <Icon name="trash alternate" />
-                  </Button>
+                  />
                 </Table.Cell>
                 <Table.Cell>{pTax.taxName}</Table.Cell>
                 <Table.Cell textAlign="left">

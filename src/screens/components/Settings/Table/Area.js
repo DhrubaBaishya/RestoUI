@@ -1,17 +1,13 @@
 import React, { Component } from "react";
-import {
-  Segment,
-  Button,
-  Icon,
-  Divider,
-  Table,
-  Confirm,
-} from "semantic-ui-react";
+import { Segment, Divider, Table, Confirm } from "semantic-ui-react";
 import AddArea from "./AddArea";
 import { warnings, urls } from "../../../../properties/properties";
 import UpdateArea from "./UpdateArea";
 import Axios from "axios";
 import authHeader from "../../../../service/authHeader";
+import AppButton from "../../Common/AppButton";
+import UpdateButton from "../../Common/UpdateButton";
+import DeleteButton from "../../Common/DeleteButton";
 
 class Area extends Component {
   constructor(props) {
@@ -97,51 +93,28 @@ class Area extends Component {
     return (
       <div>
         <Segment attached="bottom">
-          <Button basic size="medium" color="brown" onClick={this.openAddArea}>
-            <Icon name="add" /> Add Area
-          </Button>
+          <AppButton title="Add Area" icon="add" onClick={this.openAddArea} />
           <Divider />
-          <Table compact>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell colSpan="1"></Table.HeaderCell>
-                <Table.HeaderCell colSpan="2">Area</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {areaList.length === 0 ? (
+          {areaList.length > 0 ? (
+            <Table compact>
+              <Table.Header>
                 <Table.Row>
-                  <Table.Cell collapsing></Table.Cell>
-                  <Table.Cell>
-                    No Area added. Please add an area. Example: AC, Non AC,
-                    Terrace, etc. to start adding tables.
-                  </Table.Cell>
-                  <Table.Cell collapsing textAlign="right"></Table.Cell>
+                  <Table.HeaderCell colSpan="1" collapsing></Table.HeaderCell>
+                  <Table.HeaderCell colSpan="2">Area</Table.HeaderCell>
                 </Table.Row>
-              ) : (
-                areaList.map((area) => (
+              </Table.Header>
+              <Table.Body>
+                {areaList.map((area) => (
                   <Table.Row key={area.areaId}>
                     <Table.Cell collapsing>
-                      <Button
-                        icon
-                        size="mini"
-                        basic
-                        color="blue"
+                      <UpdateButton
                         loading={loading}
                         onClick={() => this.openUpdateArea(area)}
-                      >
-                        <Icon name="edit" />
-                      </Button>
-                      <Button
-                        icon
-                        size="mini"
+                      />
+                      <DeleteButton
                         loading={loading}
-                        basic
-                        color="orange"
                         onClick={() => this.showConfirm(area)}
-                      >
-                        <Icon name="trash alternate" />
-                      </Button>
+                      />
                     </Table.Cell>
                     <Table.Cell>{area.areaName}</Table.Cell>
                     <Table.Cell collapsing textAlign="right">
@@ -149,10 +122,12 @@ class Area extends Component {
                       {area.tables.length > 1 ? "tables" : "table"}
                     </Table.Cell>
                   </Table.Row>
-                ))
-              )}
-            </Table.Body>
-          </Table>
+                ))}
+              </Table.Body>
+            </Table>
+          ) : (
+            ""
+          )}
         </Segment>
         <AddArea
           open={openAddArea}

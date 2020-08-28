@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Modal, Form, Button, Message, Input } from "semantic-ui-react";
+import { Form, Message, Input } from "semantic-ui-react";
 import CategoryType from "./CategoryType";
 import Axios from "axios";
 import { urls, errorMessages } from "../../../../properties/properties";
 import authHeader from "../../../../service/authHeader";
+import AppModal from "../../Common/AppModal";
 
 class UpdateCategory extends Component {
   constructor(props) {
@@ -54,9 +55,9 @@ class UpdateCategory extends Component {
     }
   }
 
-  toggleAdding = () => {
+  toggleLoading = () => {
     this.setState({
-      adding: !this.state.adding,
+      loading: !this.state.loading,
     });
   };
 
@@ -109,7 +110,7 @@ class UpdateCategory extends Component {
         formError: true,
       });
     } else {
-      this.toggleAdding();
+      this.toggleLoading();
       this.close();
       Axios.post(urls.category, category, { headers: authHeader() })
         .then((response) => {
@@ -119,51 +120,41 @@ class UpdateCategory extends Component {
           ) {
             this.props.updateCategory(response.data.result[0], oldCategory);
           }
-          this.toggleAdding();
+          this.toggleLoading();
         })
         .catch((msg) => {
-          this.toggleAdding();
+          this.toggleLoading();
         });
     }
   };
 
   render() {
-    const { formError, category, adding, error } = this.state;
+    const { formError, category, loading, error } = this.state;
+    const { open } = this.props;
     return (
-      <Modal size="mini" open={this.props.open} onClose={this.close}>
-        <Modal.Header>Update Category</Modal.Header>
-        <Modal.Content>
-          <Form error={formError}>
-            <Form.Field>
-              <CategoryType
-                typeChangeHandler={this.typeChangeHandler}
-                categoryTypeId={category.categoryTypeId}
-              />
-            </Form.Field>
-            <Form.Field
-              control={Input}
-              placeholder="Name"
-              value={category.categoryName}
-              onChange={this.nameChangeHandler}
+      <AppModal
+        header="Update Category"
+        open={open}
+        close={this.close}
+        save={this.updateCategory}
+        loading={loading}
+      >
+        <Form error={formError}>
+          <Form.Field>
+            <CategoryType
+              typeChangeHandler={this.typeChangeHandler}
+              categoryTypeId={category.categoryTypeId}
             />
-            <Message error content={error} />
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.close} disabled={adding}>
-            Cancel
-          </Button>
-          <Button
-            positive
-            icon="save"
-            loading={adding}
-            disabled={adding}
-            labelPosition="right"
-            content="Save"
-            onClick={this.updateCategory}
+          </Form.Field>
+          <Form.Field
+            control={Input}
+            placeholder="Name"
+            value={category.categoryName}
+            onChange={this.nameChangeHandler}
           />
-        </Modal.Actions>
-      </Modal>
+          <Message error content={error} />
+        </Form>
+      </AppModal>
     );
   }
 }
