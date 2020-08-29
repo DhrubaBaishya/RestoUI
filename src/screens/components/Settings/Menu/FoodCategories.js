@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Table, Divider, Confirm } from "semantic-ui-react";
 import UpdateItem from "./UpdateItem";
 import Axios from "axios";
@@ -52,8 +52,9 @@ class FoodCategories extends Component {
     this.setState({
       open: false,
       item: {
-        id: "",
         itemName: "",
+        itemType: "SINGLE",
+        variants: [],
         price: "",
         categoryId: "",
       },
@@ -87,7 +88,7 @@ class FoodCategories extends Component {
     //console.log("Rendering::: " + category.id);
     return (
       <div>
-        <Table compact>
+        <Table compact="very">
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell colSpan="1"></Table.HeaderCell>
@@ -98,22 +99,37 @@ class FoodCategories extends Component {
           </Table.Header>
           <Table.Body>
             {category.items.map((item) => (
-              <Table.Row key={item.id}>
-                <Table.Cell collapsing>
-                  <UpdateButton
-                    loading={loading}
-                    onClick={() => this.openUpdate(item)}
-                  />
-                  <DeleteButton
-                    loading={loading}
-                    onClick={() => this.showConfirm(item)}
-                  />
-                </Table.Cell>
-                <Table.Cell>{item.itemName}</Table.Cell>
-                <Table.Cell collapsing textAlign="right">
-                  {item.price} /-
-                </Table.Cell>
-              </Table.Row>
+              <Fragment>
+                <Table.Row key={item.id}>
+                  <Table.Cell collapsing>
+                    <UpdateButton
+                      loading={loading}
+                      onClick={() => this.openUpdate(item)}
+                    />
+                    <DeleteButton
+                      loading={loading}
+                      onClick={() => this.showConfirm(item)}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{item.itemName}</Table.Cell>
+                  <Table.Cell collapsing textAlign="right">
+                    {item.itemType === "SINGLE" ? item.price + " /-" : ""}
+                  </Table.Cell>
+                </Table.Row>
+                {item.itemType === "MULTIPLE" && item.variants.length > 0
+                  ? item.variants.map((variant) => (
+                      <Table.Row key={variant.variantId}>
+                        <Table.Cell collapsing></Table.Cell>
+                        <Table.Cell>
+                          <strong>{variant.variantName}</strong>
+                        </Table.Cell>
+                        <Table.Cell collapsing textAlign="right">
+                          {variant.price} /-
+                        </Table.Cell>
+                      </Table.Row>
+                    ))
+                  : ""}
+              </Fragment>
             ))}
           </Table.Body>
         </Table>

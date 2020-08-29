@@ -111,9 +111,9 @@ class LoginScreen extends Component {
                     <Header as="h2" color="teal" textAlign="center">
                       <Image src={logo} />
                     </Header>
-                    <Header as="h2" color="teal" textAlign="center">
+                    {/* <Header as="h2" color="teal" textAlign="center">
                       Login to your account
-                    </Header>
+                    </Header> */}
                     <Form
                       size="large"
                       error={error}

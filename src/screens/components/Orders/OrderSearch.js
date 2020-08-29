@@ -74,7 +74,7 @@ class OrderSearch extends Component {
         return (
           <SemanticDatepicker
             type="basic"
-            placeholder="After"
+            placeholder="On or After"
             onChange={this.dateChangeHandler}
             datePickerOnly={true}
           />
@@ -83,7 +83,7 @@ class OrderSearch extends Component {
         return (
           <SemanticDatepicker
             type="basic"
-            placeholder="Before"
+            placeholder="On or Before"
             onChange={this.dateChangeHandler}
           />
         );

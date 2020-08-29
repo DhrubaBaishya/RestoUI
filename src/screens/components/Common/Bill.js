@@ -3,7 +3,7 @@ import { businessDetails } from "../../../properties/properties";
 
 class Bill extends Component {
   render() {
-    const { order } = this.props;
+    const { order, tableName } = this.props;
     let items = order.items;
     let totalAmount = items.reduce((prev, item) => {
       return prev + item.quantity * item.price;
@@ -38,7 +38,7 @@ class Bill extends Component {
                 Bill No: <strong>{order.orderId}</strong>
               </td>
               <td style={{ textAlign: "center" }}>
-                Table: <strong>{order.tableName}</strong>
+                Table: <strong>{tableName}</strong>
               </td>
               <td style={{ textAlign: "right" }}>{order.properCreationDate}</td>
             </tr>

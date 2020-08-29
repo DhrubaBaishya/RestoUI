@@ -9,12 +9,16 @@ class BillModal extends Component {
   };
 
   render() {
-    const { open, order } = this.props;
+    const { open, order, tableName } = this.props;
     return (
       <Modal open={open} onClose={this.close} size="mini">
         <Modal.Content scrolling>
           <Modal.Description>
-            <Bill order={order} ref={(el) => (this.componentRef = el)} />
+            <Bill
+              order={order}
+              tableName={tableName}
+              ref={(el) => (this.componentRef = el)}
+            />
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>

@@ -4,7 +4,7 @@ import { tableEmpty, tableOccupied } from "./style";
 
 class Table extends Component {
   openOrder = () => {
-    this.props.openOrder(this.props.table);
+    this.props.openOrder(this.props.area, this.props.table);
   };
 
   render() {

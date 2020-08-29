@@ -5,42 +5,65 @@ import {
   Button,
   Confirm,
   Divider,
-  Modal,
+  Form,
+  Message,
 } from "semantic-ui-react";
 import MenuModal from "./MenuModal";
 import Items from "./Items";
 import Axios from "axios";
-import { urls } from "../../../properties/properties";
+import { urls, errorMessages } from "../../../properties/properties";
 import authHeader from "../../../service/authHeader";
 import Taxes from "./Taxes";
 import BillModal from "./BillModal";
+import ConfirmModal from "../Common/ConfirmModal";
+import TablesLOV from "../Common/TablesLOV";
+import AppModal from "../Common/AppModal";
+import { validateResponse } from "../../../util/Util";
 
 class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      formError: false,
+      errors: [],
       loading: false,
       disabled: true,
       openConfirm: false,
       openCompleteConfirm: false,
       openCancelConfirm: false,
+      openChangeTable: false,
       openBill: false,
       openMenu: false,
       saved: true,
       orderCreated: false,
       order: {
-        tableId: this.props.table.tableId,
-        tableName: this.props.table.tableName,
+        table: this.props.table,
+        tableName:
+          this.props.area.areaName + " - " + this.props.table.tableName,
         status: "NEW",
         items: [],
         taxes: [],
       },
+      tableId: "",
     };
   }
 
   toggleLoading = () => {
     this.setState({
       loading: !this.state.loading,
+    });
+  };
+
+  openChangeTable = () => {
+    this.setState({
+      openChangeTable: true,
+    });
+  };
+
+  closeChangeModal = () => {
+    this.setState({
+      formError: false,
+      openChangeTable: false,
     });
   };
 
@@ -122,6 +145,13 @@ class Order extends Component {
     } else {
       this.openConfirm();
     }
+  };
+
+  tableChangeHandler = (pTableId) => {
+    this.setState({
+      formError: false,
+      tableId: pTableId,
+    });
   };
 
   toggleInclude = (pTax) => {
@@ -234,17 +264,48 @@ class Order extends Component {
       });
   };
 
+  changeTable = () => {
+    const { order, tableId } = this.state;
+    this.toggleLoading();
+    if (tableId === "") {
+      this.setState({
+        formError: true,
+        loading: false,
+        errors: [errorMessages.selectTable],
+      });
+    } else {
+      Axios.post(urls.changeTable + tableId, order, {
+        headers: authHeader(),
+      })
+        .then((response) => {
+          if (validateResponse(response)) {
+            this.toggleLoading();
+            this.props.changeTable(order, tableId);
+            this.setState({
+              openChangeTable: false,
+            });
+          }
+        })
+        .catch((msg) => {
+          this.toggleLoading();
+          console.log(msg);
+        });
+    }
+  };
+
   saveOrder = () => {
     const { order } = this.state;
     this.toggleLoading();
     Axios.post(urls.order, order, { headers: authHeader() })
       .then((response) => {
         if (response.data.result != null && response.data.result.length > 0) {
+          let orderReturned = response.data.result[0];
+          orderReturned.table = order.table;
           this.setState({
             orderCreated: true,
             saved: true,
-            order: response.data.result[0],
-            items: response.data.result[0].items,
+            order: orderReturned,
+            items: orderReturned.items,
           });
         }
         this.toggleLoading();
@@ -263,10 +324,12 @@ class Order extends Component {
       .then(
         Axios.spread((pOrder) => {
           if (pOrder.data.result != null && pOrder.data.result.length > 0) {
+            let orderReturned = pOrder.data.result[0];
+            orderReturned.table = table;
             this.setState({
               disabled: false,
               orderCreated: true,
-              order: pOrder.data.result[0],
+              order: orderReturned,
             });
           } else {
             this.setState({
@@ -282,10 +345,14 @@ class Order extends Component {
 
   render() {
     const {
+      formError,
+      errors,
       order,
+      tableId,
       openConfirm,
       openCompleteConfirm,
       openCancelConfirm,
+      openChangeTable,
       openBill,
       openMenu,
       saved,
@@ -293,11 +360,11 @@ class Order extends Component {
       loading,
       disabled,
     } = this.state;
-    const { table } = this.props;
+    const { area, table } = this.props;
     return (
       <Segment raised>
         <Header as="h3" block color="white" inverted>
-          Order for {table.tableName}
+          Order for {area.areaName} - {table.tableName}
         </Header>
         <Items
           items={order.items}
@@ -349,6 +416,18 @@ class Order extends Component {
             />
 
             <Button
+              basic
+              floated="left"
+              icon="file alternate outline"
+              labelPosition="right"
+              color="blue"
+              content="Change Table"
+              loading={loading}
+              disabled={!saved || loading || disabled}
+              onClick={this.openChangeTable}
+            />
+
+            <Button
               positive
               floated="right"
               icon="save"
@@ -391,6 +470,9 @@ class Order extends Component {
           disabled={loading || disabled}
           onClick={this.openMenu}
         />
+        <br />
+        <br />
+        <Divider />
         <Confirm
           open={openConfirm}
           header="Are you sure?"
@@ -400,64 +482,48 @@ class Order extends Component {
           onConfirm={this.handleConfirm}
           size="mini"
         />
-
-        <Modal
-          size="mini"
+        <ConfirmModal
           open={openCompleteConfirm}
-          onClose={this.closeCompleteConfirm}
-        >
-          <Modal.Header>Complete Confirmation</Modal.Header>
-          <Modal.Content>
-            <p>Are you sure you want to complete the order?</p>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button
-              loading={loading}
-              disabled={loading}
-              onClick={this.closeCompleteConfirm}
-            >
-              Cancel
-            </Button>
-            <Button
-              positive
-              loading={loading}
-              disabled={loading}
-              onClick={this.handleCompleteConfirm}
-            >
-              Confirm
-            </Button>
-          </Modal.Actions>
-        </Modal>
-
-        <Modal
-          size="mini"
+          header="Complete Confirmation"
+          content="Are you sure you want to complete the order?"
+          color="green"
+          close={this.closeCompleteConfirm}
+          confirm={this.handleCompleteConfirm}
+        />
+        <ConfirmModal
           open={openCancelConfirm}
-          onClose={this.closeCancelConfirm}
-        >
-          <Modal.Header>Cancel Confirmation</Modal.Header>
-          <Modal.Content>
-            <p>Are you sure you want to cancel the order?</p>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button
-              loading={loading}
-              disabled={loading}
-              onClick={this.closeCancelConfirm}
-            >
-              Cancel
-            </Button>
-            <Button
-              positive
-              loading={loading}
-              disabled={loading}
-              onClick={this.handleCancelConfirm}
-            >
-              Confirm
-            </Button>
-          </Modal.Actions>
-        </Modal>
+          header="Cancel Confirmation"
+          content="Are you sure you want to cancel the order?"
+          color="red"
+          close={this.closeCancelConfirm}
+          confirm={this.handleCancelConfirm}
+        />
 
-        <BillModal open={openBill} close={this.closeBill} order={order} />
+        <BillModal
+          open={openBill}
+          close={this.closeBill}
+          order={order}
+          tableName={area.areaName + " - " + table.tableName}
+        />
+
+        <AppModal
+          open={openChangeTable}
+          close={this.closeChangeModal}
+          loading={loading}
+          header="Change Table"
+          save={this.changeTable}
+        >
+          <Form error={formError}>
+            <Form.Field>
+              <TablesLOV
+                defaultValue={tableId}
+                disabled={!saved || loading || disabled}
+                changeHandler={this.tableChangeHandler}
+              />
+            </Form.Field>
+            <Message error negative list={errors} />
+          </Form>
+        </AppModal>
 
         <MenuModal
           open={openMenu}
@@ -467,9 +533,6 @@ class Order extends Component {
         />
         <br />
         <br />
-        {/* </Grid.Column>
-          </Grid.Row>
-        </Grid> */}
       </Segment>
     );
   }

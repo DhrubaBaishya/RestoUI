@@ -9,7 +9,7 @@ class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeItem: 2,
+      activeItem: 1,
     };
   }
 

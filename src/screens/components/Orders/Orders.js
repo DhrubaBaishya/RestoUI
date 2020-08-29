@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  Segment,
-  Table,
-  Divider,
-  Header,
-  Button,
-  Icon,
-} from "semantic-ui-react";
+import { Segment, Table, Divider, Header } from "semantic-ui-react";
 import Axios from "axios";
 import { generateURL, validateResponse, noResult } from "../../../util/Util";
 import { urls, general } from "../../../properties/properties";
@@ -14,6 +7,7 @@ import authHeader from "../../../service/authHeader";
 import LoadMore from "../Common/LoadMore";
 import OrderSearch from "./OrderSearch";
 import BillModal from "../Dashboard/BillModal";
+import AppButton from "../Common/AppButton";
 
 class Orders extends Component {
   constructor(props) {
@@ -188,18 +182,17 @@ class Orders extends Component {
         <Segment>
           <Header>Order History</Header>
           <Divider />
-          <Button basic size="medium" color="brown" onClick={this.openSearch}>
-            <Icon name="search" /> Open Search
-          </Button>
+          <AppButton
+            title="Open Search"
+            icon="search"
+            onClick={this.openSearch}
+          />
           {search ? (
-            <Button
-              basic
-              size="medium"
-              color="brown"
+            <AppButton
+              title="Clear Search"
+              icon="close"
               onClick={this.clearSearch}
-            >
-              <Icon name="close" /> Clear Search
-            </Button>
+            />
           ) : (
             ""
           )}
@@ -271,7 +264,12 @@ class Orders extends Component {
             search={this.search}
           />
         </Segment>
-        <BillModal open={openBill} close={this.closeBill} order={order} />
+        <BillModal
+          open={openBill}
+          close={this.closeBill}
+          order={order}
+          tableName={order.tableName}
+        />
       </div>
     );
   }

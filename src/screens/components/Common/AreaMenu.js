@@ -9,6 +9,7 @@ class AreaMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      activeItem: "",
       loading: true,
       areaList: [],
     };

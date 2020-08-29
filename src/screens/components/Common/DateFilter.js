@@ -8,12 +8,12 @@ class DateFilter extends Component {
       options: [
         {
           key: "AFTER",
-          text: "After",
+          text: "On or After",
           value: "AFTER",
         },
         {
           key: "BEFORE",
-          text: "Before",
+          text: "On or Before",
           value: "BEFORE",
         },
         {

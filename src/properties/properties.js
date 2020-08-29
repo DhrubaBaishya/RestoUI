@@ -17,6 +17,7 @@ export const urls = {
   personDeactivate: host + "/app-service/api/v1/person/deactivate/",
   tax: host + "/app-service/api/v1/tax",
   tableOrder: host + "/app-service/api/v1/order/table/",
+  changeTable: host + "/app-service/api/v1/order/table/change/",
   order: host + "/app-service/api/v1/order",
   completeOrder: host + "/app-service/api/v1/order/complete",
   cancelOrder: host + "/app-service/api/v1/order/cancel",
@@ -34,6 +35,7 @@ export const errorMessages = {
   fieldEmpty: "Please fill in all the fields",
   categoryExists: "Category name already exists",
   invalidValue: " is invalid",
+  selectTable: "Please select a table",
 };
 
 export const warnings = {

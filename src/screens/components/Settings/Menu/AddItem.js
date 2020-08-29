@@ -23,7 +23,7 @@ class AddItem extends Component {
       error: "",
       item: {
         itemName: "",
-        itemType: "MULTIPLE",
+        itemType: "SINGLE",
         variants: [],
         price: "",
         categoryId: "",
@@ -134,9 +134,7 @@ class AddItem extends Component {
   deleteVariant = (pVariant) => {
     let { item } = this.state;
     let variants = item.variants.filter(
-      (variant) =>
-        variant.variantName !== pVariant.variantName &&
-        variant.price !== pVariant.price
+      (variant) => variant.variantName !== pVariant.variantName
     );
     item.variants = variants;
     this.setState({

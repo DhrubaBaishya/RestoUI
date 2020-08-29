@@ -10,7 +10,7 @@ class MenuSettings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeItem: 2,
+      activeItem: 1,
       categoryTypes: [],
     };
   }
@@ -95,8 +95,6 @@ class MenuSettings extends Component {
   };
 
   updateItem = (pItem, oldItem) => {
-    console.log(pItem);
-    console.log(oldItem);
     let { categoryTypes } = this.state;
     let typeIndex = categoryTypes.findIndex(
       (type) => type.id === pItem.categoryTypeId

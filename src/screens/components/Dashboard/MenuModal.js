@@ -37,6 +37,17 @@ export default class componentName extends Component {
     return 0;
   };
 
+  getVariantQuantity = (pItem, pVariant) => {
+    let { items } = this.state;
+    let index = items.findIndex(
+      (item) => item.itemName === pItem.itemName + " - " + pVariant.variantName
+    );
+    if (index >= 0) {
+      return items[index].quantity;
+    }
+    return 0;
+  };
+
   addItem = (pItem) => {
     let { order } = this.props;
     let { items } = this.state;
@@ -49,6 +60,29 @@ export default class componentName extends Component {
       pItem.quantity = 1;
       pItem.orderId = order.orderId;
       items.push(pItem);
+    }
+    this.setState({
+      items: items,
+    });
+  };
+
+  addVariant = (pItem, pVariant) => {
+    let { order } = this.props;
+    let { items } = this.state;
+    let index = items.findIndex(
+      (item) => item.itemName === pItem.itemName + " - " + pVariant.variantName
+    );
+    if (index >= 0) {
+      let item = items[index];
+      item.quantity = item.quantity + 1;
+      item.orderId = order.orderId;
+    } else {
+      let item = JSON.parse(JSON.stringify(pItem));
+      item.itemName = pItem.itemName + " - " + pVariant.variantName;
+      item.price = pVariant.price;
+      item.quantity = 1;
+      item.orderId = order.orderId;
+      items.push(item);
     }
     this.setState({
       items: items,
@@ -128,26 +162,52 @@ export default class componentName extends Component {
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                  {category.items.map((item) => (
-                    <Table.Row key={item.id}>
-                      <Table.Cell>{item.itemName}</Table.Cell>
-                      <Table.Cell collapsing textAlign="right">
-                        {item.price} /-
-                      </Table.Cell>
-                      <Table.Cell collapsing textAlign="right">
-                        <Button
-                          fluid
-                          basic
-                          size="mini"
-                          onClick={() => this.addItem(item)}
-                        >
-                          {this.getQuantity(item) > 0
-                            ? this.getQuantity(item) + " "
-                            : "Add"}
-                        </Button>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
+                  {category.items.map((item) =>
+                    item.itemType === "SINGLE" ? (
+                      <Table.Row key={item.id}>
+                        <Table.Cell>{item.itemName}</Table.Cell>
+                        <Table.Cell collapsing textAlign="right">
+                          {item.price} /-
+                        </Table.Cell>
+                        <Table.Cell collapsing textAlign="right">
+                          <Button
+                            fluid
+                            basic
+                            size="mini"
+                            onClick={() => this.addItem(item)}
+                          >
+                            {this.getQuantity(item) > 0
+                              ? this.getQuantity(item) + " "
+                              : "Add"}
+                          </Button>
+                        </Table.Cell>
+                      </Table.Row>
+                    ) : (
+                      item.variants.map((variant) => (
+                        <Table.Row key={variant.variantId}>
+                          <Table.Cell>
+                            <strong>{item.itemName}</strong> -{" "}
+                            {variant.variantName}
+                          </Table.Cell>
+                          <Table.Cell collapsing textAlign="right">
+                            {variant.price} /-
+                          </Table.Cell>
+                          <Table.Cell collapsing textAlign="right">
+                            <Button
+                              fluid
+                              basic
+                              size="mini"
+                              onClick={() => this.addVariant(item, variant)}
+                            >
+                              {this.getVariantQuantity(item, variant) > 0
+                                ? this.getVariantQuantity(item, variant) + " "
+                                : "Add"}
+                            </Button>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))
+                    )
+                  )}
                 </Table.Body>
               </Table>
             ) : (

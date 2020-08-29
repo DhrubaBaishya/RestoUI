@@ -32,10 +32,10 @@ class Items extends Component {
                   <Table.Row>
                     <Table.HeaderCell></Table.HeaderCell>
                     <Table.HeaderCell>{key} Items</Table.HeaderCell>
-                    <Table.HeaderCell textAlign="center">
+                    <Table.HeaderCell textAlign="center" collapsing>
                       Price
                     </Table.HeaderCell>
-                    <Table.HeaderCell textAlign="center">
+                    <Table.HeaderCell textAlign="center" collapsing>
                       Quantity
                     </Table.HeaderCell>
                     <Table.HeaderCell collapsing>Total</Table.HeaderCell>
@@ -62,10 +62,10 @@ class Items extends Component {
                         </Button.Group>
                       </Table.Cell>
                       <Table.Cell>{item.itemName}</Table.Cell>
-                      <Table.Cell textAlign="center">
+                      <Table.Cell textAlign="center" collapsing>
                         {item.price} /-
                       </Table.Cell>
-                      <Table.Cell textAlign="center">
+                      <Table.Cell textAlign="center" collapsing>
                         {item.quantity}
                       </Table.Cell>
                       <Table.Cell collapsing>

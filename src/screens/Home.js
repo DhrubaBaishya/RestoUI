@@ -12,7 +12,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeItem: 4,
+      activeItem: 1,
     };
   }
 

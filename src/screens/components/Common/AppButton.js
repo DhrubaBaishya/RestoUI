@@ -6,7 +6,8 @@ class AppButton extends Component {
     const { title, icon, onClick } = this.props;
     return (
       <Button basic size="medium" color="blue" onClick={onClick}>
-        <Icon name={icon} /> {title}
+        {icon ? <Icon name={icon} /> : ""}
+        {title}
       </Button>
     );
   }
